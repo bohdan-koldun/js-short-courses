@@ -151,6 +151,15 @@ pre.code:hover .copy-btn{opacity:1}
 .val-issue .fix{font-size:12.5px;color:var(--green)}
 .val-issue b{font-weight:600}
 
+/* ===== TOPBAR ===== */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+.topbar-inner{max-width:780px;margin:0 auto;height:48px;display:flex;align-items:center;gap:16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;font-weight:600;text-decoration:none;transition:color .2s}
+.back-link:hover{color:var(--accent)}
+.back-link svg{width:14px;height:14px;flex-shrink:0}
+.topbar-sep{color:var(--border);font-size:16px}
+.topbar-cur{font-size:13px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 /* ===== FOOTER ===== */
 .footer{text-align:center;padding:24px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:40px}
 
@@ -167,6 +176,17 @@ pre.code:hover .copy-btn{opacity:1}
 </style>
 </head>
 <body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 7H3M6 3L2 7l4 4"/></svg>
+      Всі курси
+    </a>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-cur">Algorithms &amp; Data Structures</span>
+  </div>
+</header>
 
 <!-- ===== HERO ===== -->
 <div class="hero">
