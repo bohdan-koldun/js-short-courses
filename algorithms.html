@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Algorithms & Data Structures — Курс для новачків</title>
+<meta name="description" content="Основні алгоритми та структури даних для JavaScript / Node.js розробника. 14 тем з поясненнями, кодом, діаграмами та задачами.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e17;--surface:#121824;--surface2:#181f32;--border:#252d40;
+  --border-active:#4a8eff;--text:#dfe6f0;--text-muted:#6b7a94;
+  --accent:#4a8eff;--green:#34d058;--yellow:#e3a832;--red:#f0564a;
+  --purple:#a78bfa;--code-bg:#0c1018;
+  --font-body:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Fira Code',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+/* ===== HEADER ===== */
+.hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(74,142,255,.08) 0%,transparent 70%);pointer-events:none}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);margin-bottom:12px;text-transform:uppercase}
+.hero h1{font-size:clamp(26px,5vw,42px);font-weight:800;line-height:1.15;margin-bottom:10px;background:linear-gradient(135deg,#4a8eff 0%,#a78bfa 50%,#4a8eff 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 6s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-sub{color:var(--text-muted);font-size:15px;max-width:480px;margin:0 auto}
+.hero-tags{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.hero-tag{background:rgba(74,142,255,.08);border:1px solid rgba(74,142,255,.15);border-radius:99px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--accent)}
+
+/* ===== CONTAINER ===== */
+.container{max-width:780px;margin:0 auto;padding:0 16px 60px}
+
+/* ===== NAV ===== */
+.nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:32px;padding:16px;background:var(--surface);border-radius:14px;border:1px solid var(--border)}
+.nav-btn{background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{color:var(--text);background:var(--surface2);border-color:var(--border)}
+.nav-btn.active{color:var(--accent);background:rgba(74,142,255,.1);border-color:rgba(74,142,255,.25)}
+
+/* ===== SECTION LABEL ===== */
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase}
+
+/* ===== TOPIC CARD ===== */
+.topic{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .25s}
+.topic.open{border-color:rgba(74,142,255,.35)}
+.topic-header{width:100%;display:flex;align-items:center;gap:14px;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font-body)}
+.topic-emoji{font-size:26px;flex-shrink:0;width:36px;text-align:center}
+.topic-info{flex:1;min-width:0}
+.topic-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topic-sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.topic-chevron{color:var(--text-muted);font-size:18px;transition:transform .25s;flex-shrink:0}
+.topic.open .topic-chevron{transform:rotate(180deg)}
+.badge-new{background:rgba(52,208,88,.12);color:var(--green);font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;border:1px solid rgba(52,208,88,.25);letter-spacing:.5px}
+.topic-body{padding:0 20px 22px;display:none}
+.topic.open .topic-body{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== EXPLANATION BOX ===== */
+.explain-box{background:var(--bg);border-radius:10px;padding:16px 18px;margin-bottom:14px;border-left:3px solid var(--accent)}
+.explain-label{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+.explain-text{font-size:14px;line-height:1.7;color:var(--text)}
+
+/* ===== META ===== */
+.meta-real{font-size:13px;color:var(--text-muted);margin-bottom:14px}
+.meta-real b{color:var(--purple);font-weight:600}
+.bigo{display:inline-block;background:rgba(240,86,74,.08);border:1px solid rgba(240,86,74,.2);border-radius:8px;padding:5px 14px;font-size:12px;font-family:var(--font-mono);color:var(--red);font-weight:600;margin-bottom:14px}
+
+/* ===== DIAGRAMS ===== */
+.diagram{margin:16px 0 18px}
+.diagram-array{display:flex;gap:3px}
+.diagram-array .cell{width:54px;height:54px;background:linear-gradient(135deg,rgba(74,142,255,.12),rgba(74,142,255,.05));border:1px solid rgba(74,142,255,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:var(--accent);font-family:var(--font-mono)}
+.diagram-array .idx{text-align:center;font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px}
+
+.diagram-stack{display:flex;flex-direction:column;align-items:center;gap:3px}
+.diagram-stack .lbl{font-size:11px;color:var(--yellow);margin-bottom:4px;letter-spacing:1px;font-family:var(--font-mono)}
+.diagram-stack .cell{width:130px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-weight:600;font-size:15px;font-family:var(--font-mono);border:1px solid var(--border);background:var(--surface2);color:var(--text)}
+.diagram-stack .cell.top{background:rgba(52,208,88,.08);border-color:rgba(52,208,88,.3);color:var(--green)}
+
+.diagram-queue{display:flex;align-items:center;gap:5px}
+.diagram-queue .dir{font-size:11px;font-family:var(--font-mono);writing-mode:vertical-rl}
+.diagram-queue .dir.out{transform:rotate(180deg);color:var(--red)}
+.diagram-queue .dir.in{color:var(--green)}
+.diagram-queue .cell{padding:8px 14px;border-radius:7px;font-family:var(--font-mono);font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface2);color:var(--text)}
+.diagram-queue .cell.first{background:rgba(240,86,74,.08);border-color:rgba(240,86,74,.25);color:var(--red)}
+
+.diagram-ll{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.diagram-ll .head-lbl{font-size:11px;color:var(--purple);margin-right:6px;font-family:var(--font-mono)}
+.diagram-ll .node{padding:8px 14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25);border-radius:8px;font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--purple)}
+.diagram-ll .arrow{margin:0 5px;color:var(--text-muted);font-size:14px}
+
+.diagram-tree{font-family:var(--font-mono);font-size:13px;line-height:1.6;text-align:center}
+.diagram-tree .tn{display:inline-block;padding:3px 11px;border-radius:7px;font-weight:600}
+.diagram-tree .tn.root{background:rgba(52,208,88,.08);border:1px solid rgba(52,208,88,.25);color:var(--green)}
+.diagram-tree .tn.mid{background:rgba(74,142,255,.08);border:1px solid rgba(74,142,255,.25);color:var(--accent)}
+.diagram-tree .tn.leaf{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);color:var(--purple)}
+.diagram-tree .branches{color:var(--text-muted);letter-spacing:2px}
+.tree-row{display:flex;justify-content:center;gap:40px}
+.tree-row-sm{display:flex;justify-content:center;gap:16px;margin-left:-30px}
+
+/* ===== CODE ===== */
+.code-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+pre.code{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.7;color:#c9d1d9;font-family:var(--font-mono);margin:0 0 16px;tab-size:2;position:relative}
+pre.code .kw{color:#ff7b72}
+pre.code .fn{color:#d2a8ff}
+pre.code .str{color:#a5d6ff}
+pre.code .num{color:#79c0ff}
+pre.code .cmt{color:#484f58;font-style:italic}
+pre.code .op{color:#ff7b72}
+pre.code .cls{color:#ffa657}
+pre.code .bi{color:#79c0ff}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:var(--font-mono);transition:all .2s;opacity:0}
+pre.code:hover .copy-btn{opacity:1}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.copy-btn.copied{color:var(--green);border-color:var(--green)}
+
+/* ===== TASK ===== */
+.task{background:rgba(227,168,50,.06);border:1px solid rgba(227,168,50,.18);border-radius:12px;padding:18px;margin-top:16px}
+.task-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.task-head span:first-child{font-size:16px}
+.task-title{font-weight:700;color:var(--yellow);font-size:15px}
+.task-desc{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:10px}
+.task-io{font-family:var(--font-mono);font-size:12.5px;color:var(--text-muted);margin:8px 0}
+.task-io .lbl{font-weight:600}
+.task-io .lbl.in{color:var(--green)}
+.task-io .lbl.out{color:var(--green)}
+.task-io .lbl.in2{color:var(--red)}
+.task-io .lbl.out2{color:var(--red)}
+.hint-box{background:rgba(74,142,255,.06);border:1px solid rgba(74,142,255,.12);border-radius:8px;padding:8px 14px;margin:12px 0;font-size:13px;color:var(--accent)}
+.hint-box b{font-weight:600}
+.solution-toggle{background:transparent;border:1px solid rgba(227,168,50,.3);border-radius:8px;padding:7px 18px;color:var(--yellow);cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font-body);transition:all .2s}
+.solution-toggle:hover{background:rgba(227,168,50,.1)}
+.solution-toggle.open{background:rgba(227,168,50,.1)}
+.solution-code{display:none;margin-top:12px}
+.solution-code.open{display:block;animation:fadeIn .3s ease}
+
+/* ===== VALIDATION ===== */
+.validation{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:28px;overflow:hidden}
+.validation-header{width:100%;display:flex;align-items:center;gap:10px;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font-body)}
+.validation-body{padding:0 20px 20px}
+.val-section-title{font-size:13px;font-weight:700;margin-bottom:8px}
+.val-section-title.good{color:var(--green)}
+.val-section-title.fix{color:var(--yellow)}
+.val-item{font-size:13px;color:var(--text);padding:4px 0 4px 16px;position:relative}
+.val-item::before{content:'•';position:absolute;left:0;color:var(--green)}
+.val-issue{background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--yellow)}
+.val-issue .problem{font-size:12.5px;color:var(--red);margin-bottom:4px}
+.val-issue .fix{font-size:12.5px;color:var(--green)}
+.val-issue b{font-weight:600}
+
+/* ===== FOOTER ===== */
+.footer{text-align:center;padding:24px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:40px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+  .hero{padding:40px 16px 28px}
+  .topic-header{padding:14px 16px;gap:10px}
+  .topic-body{padding:0 16px 18px}
+  .diagram-array .cell{width:44px;height:44px;font-size:15px}
+  .nav{padding:12px;gap:4px}
+  .nav-btn{font-size:10px;padding:5px 8px}
+  .tree-row{gap:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-label">Курс для новачків</div>
+  <h1>JavaScript Algorithms<br>&amp; Data Structures</h1>
+  <p class="hero-sub">Основні алгоритми та структури даних для JavaScript / Node.js розробника. Пояснення + код + діаграми + задачі.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">14 тем</span>
+    <span class="hero-tag">Чистий JS</span>
+    <span class="hero-tag">Big O</span>
+    <span class="hero-tag">Задачі + рішення</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav"></nav>
+
+<!-- ===== VALIDATION ===== -->
+<div class="validation" id="validation">
+  <button class="validation-header" onclick="toggleValidation()">
+    <span style="font-size:22px">📋</span>
+    <span style="font-weight:700;font-size:16px;flex:1">Результат валідації курсу</span>
+    <span class="topic-chevron" id="val-chevron">▾</span>
+  </button>
+  <div class="validation-body" id="val-body">
+    <div style="margin-bottom:16px">
+      <div class="val-section-title good">✅ Що добре (5)</div>
+      <div class="val-item">Правильний порядок тем — від простого до складного</div>
+      <div class="val-item">Кожна тема має пояснення, код і завдання</div>
+      <div class="val-item">Використання чистого JS без фреймворків — вірний підхід</div>
+      <div class="val-item">Структура репозиторію логічна і зрозуміла</div>
+      <div class="val-item">Приклади коду робочі та коректні</div>
+    </div>
+    <div>
+      <div class="val-section-title fix">⚠️ Що покращено (6)</div>
+      <div class="val-issue">
+        <div class="problem"><b>Проблема:</b> Linked List стоїть на 6 місці, до Recursion — а рекурсія потрібна для розуміння деревʼяних структур</div>
+        <div class="fix"><b>Виправлення:</b> Перемістити Recursion перед Linked List (позиція 6), а Linked List — на 9</div>
+      </div>
+      <div class="val-issue">
+        <div class="problem"><b>Проблема:</b> Завдання сформульовані надто коротко і абстрактно для новачка</div>
+        <div class="fix"><b>Виправлення:</b> Додати конкретні вхідні дані, очікуваний результат і підказки</div>
+      </div>
+      <div class="val-issue">
+        <div class="problem"><b>Проблема:</b> Немає складності алгоритмів (Big O) — новачок не розуміє ЧОМУ один алгоритм кращий</div>
+        <div class="fix"><b>Виправлення:</b> Додати просту шкалу O(1) → O(n) → O(n²) до кожної теми</div>
+      </div>
+      <div class="val-issue">
+        <div class="problem"><b>Проблема:</b> Hash Table розділ не показує власну реалізацію — лише Set</div>
+        <div class="fix"><b>Виправлення:</b> Додати простий клас HashTable з методами set/get</div>
+      </div>
+      <div class="val-issue">
+        <div class="problem"><b>Проблема:</b> Немає вступу: що таке алгоритм, що таке структура даних</div>
+        <div class="fix"><b>Виправлення:</b> Додати Topic 0 з поясненням базових понять</div>
+      </div>
+      <div class="val-issue">
+        <div class="problem"><b>Проблема:</b> Binary Search пояснений без ілюстрації процесу поділу</div>
+        <div class="fix"><b>Виправлення:</b> Додати покрокову візуалізацію пошуку</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOPICS ===== -->
+<div class="section-label">ТЕМИ КУРСУ</div>
+<div id="topics"></div>
+
+<div class="footer">
+  Порада: спочатку зрозумій ідею → напиши код → виріши задачу → подивись рішення
+</div>
+
+</div><!-- container -->
+
+<script>
+// ===================== DATA =====================
+const TOPICS = [
+{id:0,emoji:"🧠",title:"Що таке алгоритм і структура даних",subtitle:"Вступ — Topic 0",isNew:true,
+explanation:"Алгоритм — це покрокова інструкція для розвʼязання задачі. Як рецепт: спочатку зроби це, потім те. Структура даних — це спосіб організувати інформацію. Як шафа: полички, ящики, вішалки — кожне для свого.",
+realWorld:"Рецепт борщу — це алгоритм. Холодильник з полицями — структура даних.",
+bigO:null,diagram:null,
+code:`// Алгоритм: знайти найбільше число
+// Крок 1: взяти перше число як "найбільше"
+// Крок 2: порівняти з кожним наступним
+// Крок 3: якщо знайшли більше — замінити
+// Крок 4: повернути результат
+
+function findMax(numbers) {
+  let max = numbers[0];        // Крок 1
+  for (const num of numbers) { // Крок 2
+    if (num > max) {           // Крок 3
+      max = num;
+    }
+  }
+  return max;                  // Крок 4
+}`,
+task:{title:"Напиши свій перший алгоритм",
+desc:'Напиши функцію <code>countEven(numbers)</code>, яка рахує кількість парних чисел у масиві.',
+input:"countEven([1, 2, 3, 4, 5, 6])",output:"3",
+hint:"Парне число ділиться на 2 без залишку: <code>number % 2 === 0</code>",
+solution:`function countEven(numbers) {
+  let count = 0;
+  for (const number of numbers) {
+    if (number % 2 === 0) {
+      count++;
+    }
+  }
+  return count;
+}
+
+console.log(countEven([1, 2, 3, 4, 5, 6])); // 3`}},
+
+{id:1,emoji:"📦",title:"Array — Масив",subtitle:"Список елементів з індексами",
+explanation:"Масив — це пронумерована полиця. Кожна комірка має номер (індекс), починаючи з 0. Можна швидко дістати елемент за номером, додати в кінець або забрати з кінця.",
+realWorld:"Список товарів у кошику, повідомлення в чаті, результати пошуку з API.",
+bigO:"Доступ за індексом: O(1) · Пошук: O(n) · push/pop: O(1) · shift/unshift: O(n)",
+diagram:"array",
+code:`const fruits = ['apple', 'banana', 'cherry'];
+
+// Додати в кінець — O(1)
+fruits.push('date');
+
+// Забрати з кінця — O(1)
+fruits.pop();
+
+// Додати на початок — O(n), бо зсуває всі
+fruits.unshift('avocado');
+
+// Знайти максимум — O(n)
+function findMax(numbers) {
+  let max = numbers[0];
+  for (const number of numbers) {
+    if (number > max) max = number;
+  }
+  return max;
+}
+
+console.log(findMax([3, 10, 2, 7])); // 10`,
+task:{title:"Знайди мінімальне число",
+desc:'Напиши функцію <code>findMin(numbers)</code>, яка повертає найменше число з масиву. Не використовуй <code>Math.min</code>.',
+input:"findMin([5, 3, 8, 1, 9])",output:"1",
+hint:"Візьми перший елемент як мінімум. Пройди по масиву — якщо знайшов менше, заміни.",
+solution:`function findMin(numbers) {
+  let min = numbers[0];
+  for (const number of numbers) {
+    if (number < min) {
+      min = number;
+    }
+  }
+  return min;
+}
+
+console.log(findMin([5, 3, 8, 1, 9])); // 1`}},
+
+{id:2,emoji:"🔤",title:"String — Рядок",subtitle:"Текст як масив символів",
+explanation:'Рядок — це послідовність символів. Слово "hello" — це масив [h, e, l, l, o]. Рядки незмінні: не можна замінити одну букву, але можна створити новий рядок.',
+realWorld:"Email-адреси, URL, пошукові запити, валідація паролів, токени.",
+bigO:"Доступ до символу: O(1) · Конкатенація в циклі: O(n²) · split/join: O(n)",
+diagram:null,
+code:`// Розвернути рядок
+function reverseString(text) {
+  let result = '';
+  for (let i = text.length - 1; i >= 0; i--) {
+    result += text[i];
+  }
+  return result;
+}
+
+// Перевірка паліндрому
+function isPalindrome(text) {
+  const cleaned = text.toLowerCase();
+  const reversed = cleaned.split('').reverse().join('');
+  return cleaned === reversed;
+}
+
+console.log(reverseString('hello')); // 'olleh'
+console.log(isPalindrome('level'));  // true
+console.log(isPalindrome('hello')); // false`,
+task:{title:"Порахуй голосні літери",
+desc:'Напиши функцію <code>countVowels(text)</code>, яка рахує голосні літери (a, e, i, o, u) у рядку. Регістр не важливий: "A" і "a" — обидві голосні.',
+input:'countVowels("Hello World")',output:"3",
+hint:'Зроби рядок lowercase. Перевіряй кожен символ: чи є він серед <code>"aeiou"</code>.',
+solution:`function countVowels(text) {
+  const vowels = 'aeiou';
+  let count = 0;
+  for (const char of text.toLowerCase()) {
+    if (vowels.includes(char)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+console.log(countVowels("Hello World")); // 3`}},
+
+{id:3,emoji:"🗂️",title:"Object / Map / Set",subtitle:"Ключ-значення та унікальність",
+explanation:'Object — коробка з підписаними ящиками: ключ → значення. Map — те саме, але ключем може бути що завгодно (не тільки рядок). Set — колекція, де кожен елемент унікальний.',
+realWorld:"Кеш даних, конфігурація, підрахунок слів, фільтрація дублікатів.",
+bigO:"Object/Map get/set: O(1) · Set has/add: O(1) · Перебір: O(n)",
+diagram:null,
+code:`// Map: підрахунок слів
+function countWords(words) {
+  const map = new Map();
+  for (const word of words) {
+    const count = map.get(word) || 0;
+    map.set(word, count + 1);
+  }
+  return map;
+}
+
+const result = countWords(['js', 'node', 'js', 'react', 'js']);
+console.log(result.get('js')); // 3
+
+// Set: тільки унікальні значення
+const ids = [1, 2, 2, 3, 3, 3];
+const unique = new Set(ids);
+console.log([...unique]); // [1, 2, 3]`,
+task:{title:"Знайди унікальні email-и",
+desc:'Напиши функцію <code>uniqueEmails(emails)</code>, яка повертає масив тільки унікальних email-адрес.',
+input:"uniqueEmails(['a@mail.com', 'b@mail.com', 'a@mail.com'])",output:"['a@mail.com', 'b@mail.com']",
+hint:"Створи Set з масиву, потім розгорни Set назад у масив через <code>[...set]</code>.",
+solution:`function uniqueEmails(emails) {
+  return [...new Set(emails)];
+}
+
+console.log(uniqueEmails([
+  'a@mail.com', 'b@mail.com', 'a@mail.com'
+])); // ['a@mail.com', 'b@mail.com']`}},
+
+{id:4,emoji:"📚",title:"Stack — Стек",subtitle:"Останній зайшов — перший вийшов (LIFO)",
+explanation:"Стек — це стопка тарілок. Кладеш тарілку зверху (push), забираєш зверху (pop). Не можеш дістати нижню, поки не знімеш верхні.",
+realWorld:"Ctrl+Z (undo), історія браузера, виклики функцій, перевірка дужок у коді.",
+bigO:"push: O(1) · pop: O(1) · peek: O(1)",
+diagram:"stack",
+code:`class Stack {
+  constructor() {
+    this.items = [];
+  }
+
+  push(value) {
+    this.items.push(value);
+  }
+
+  pop() {
+    return this.items.pop();
+  }
+
+  peek() {
+    return this.items[this.items.length - 1];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+}
+
+const history = new Stack();
+history.push('google.com');
+history.push('github.com');
+history.push('npm.org');
+console.log(history.pop()); // 'npm.org' — назад!`,
+task:{title:"Перевірка дужок",
+desc:'Напиши функцію <code>isBalanced(str)</code>, яка перевіряє, чи правильно закриті дужки у рядку. Рядок містить тільки символи <code>(</code> і <code>)</code>.',
+input:'isBalanced("((()))")',output:"true",input2:'isBalanced("(()")',output2:"false",
+hint:"Коли бачиш <code>(</code> — push в стек. Коли <code>)</code> — pop. Якщо стек порожній при <code>)</code> або не порожній в кінці — false.",
+solution:`function isBalanced(str) {
+  const stack = [];
+  for (const char of str) {
+    if (char === '(') {
+      stack.push(char);
+    } else if (char === ')') {
+      if (stack.length === 0) return false;
+      stack.pop();
+    }
+  }
+  return stack.length === 0;
+}
+
+console.log(isBalanced("(())")); // true
+console.log(isBalanced("(()")); // false
+console.log(isBalanced("()()")); // true`}},
+
+{id:5,emoji:"🚶‍♂️",title:"Queue — Черга",subtitle:"Перший зайшов — перший вийшов (FIFO)",
+explanation:"Черга — як черга в магазині. Хто першим став — першим обслуговується. Додаєш в кінець (enqueue), забираєш з початку (dequeue).",
+realWorld:"Черга задач на сервері, обробка замовлень, print queue, повідомлення в чаті.",
+bigO:"enqueue: O(1) · dequeue: O(n)* · peek: O(1)  — *O(n) бо shift() зсуває масив",
+diagram:"queue",
+code:`class Queue {
+  constructor() {
+    this.items = [];
+  }
+
+  enqueue(value) {
+    this.items.push(value);
+  }
+
+  dequeue() {
+    return this.items.shift();
+  }
+
+  peek() {
+    return this.items[0];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+}
+
+const printer = new Queue();
+printer.enqueue('doc1.pdf');
+printer.enqueue('doc2.pdf');
+printer.enqueue('photo.jpg');
+console.log(printer.dequeue()); // 'doc1.pdf' — перший!`,
+task:{title:"Черга задач із виконанням",
+desc:'Створи клас <code>TaskQueue</code> з методами: <code>add(taskName)</code> — додає задачу, <code>run()</code> — виконує (видаляє) першу задачу і повертає її назву, <code>list()</code> — повертає масив задач, що залишились.',
+input:"q.add('email'); q.add('report'); q.run()",output:"'email'  → потім q.list() → ['report']",
+hint:"Це звичайна Queue, тільки з додатковим методом <code>list()</code>, який повертає копію масиву.",
+solution:`class TaskQueue {
+  constructor() {
+    this.items = [];
+  }
+
+  add(taskName) {
+    this.items.push(taskName);
+  }
+
+  run() {
+    return this.items.shift();
+  }
+
+  list() {
+    return [...this.items];
+  }
+}
+
+const q = new TaskQueue();
+q.add('email');
+q.add('report');
+q.add('deploy');
+console.log(q.run());  // 'email'
+console.log(q.list()); // ['report', 'deploy']`}},
+
+{id:6,emoji:"🔁",title:"Recursion — Рекурсія",subtitle:"Функція, що викликає сама себе",
+explanation:'Рекурсія — це матрьошка. Відкриваєш одну — всередині менша. І так поки не дійдеш до найменшої (базовий випадок). Без базового випадку — нескінченний цикл і "stack overflow".',
+realWorld:"Обхід дерев (DOM, файли), вкладені коментарі, JSON, підрахунок факторіалу.",
+bigO:"Залежить від задачі. Факторіал: O(n) · Фібоначчі без memo: O(2ⁿ)",
+diagram:null,
+code:`// Факторіал: 5! = 5 × 4 × 3 × 2 × 1 = 120
+function factorial(n) {
+  if (n === 1) return 1;       // базовий випадок!
+  return n * factorial(n - 1); // рекурсивний виклик
+}
+
+// Як це працює:
+// factorial(5)
+//   → 5 * factorial(4)
+//     → 4 * factorial(3)
+//       → 3 * factorial(2)
+//         → 2 * factorial(1)
+//           → 1  ← базовий випадок!
+//         ← 2 * 1 = 2
+//       ← 3 * 2 = 6
+//     ← 4 * 6 = 24
+//   ← 5 * 24 = 120
+
+console.log(factorial(5)); // 120`,
+task:{title:"Сума чисел від 1 до n",
+desc:'Напиши рекурсивну функцію <code>sumTo(n)</code>, яка повертає суму всіх чисел від 1 до n. Не використовуй цикли!',
+input:"sumTo(5)",output:"15  // бо 1 + 2 + 3 + 4 + 5 = 15",
+hint:"Базовий випадок: <code>sumTo(1) = 1</code>. Рекурсивний крок: <code>sumTo(n) = n + sumTo(n - 1)</code>.",
+solution:`function sumTo(n) {
+  if (n === 1) return 1;
+  return n + sumTo(n - 1);
+}
+
+console.log(sumTo(5));  // 15
+console.log(sumTo(10)); // 55`}},
+
+{id:7,emoji:"🔍",title:"Searching — Пошук",subtitle:"Лінійний і бінарний пошук",
+explanation:"Лінійний пошук — йдеш по черзі, перевіряєш кожен. Бінарний — масив відсортований, ділиш навпіл і дивишся: ліворуч чи праворуч? Набагато швидше!",
+realWorld:"Пошук товару за ID, пошук слова в словнику, autocomplete.",
+bigO:"Лінійний: O(n) · Бінарний: O(log n) — величезна різниця на великих масивах!",
+diagram:null,
+code:`// Лінійний пошук — простий, але повільний
+function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) return i;
+  }
+  return -1;
+}
+
+// Бінарний пошук — швидкий, але масив МУСИТЬ бути відсортований
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+
+    if (arr[mid] === target) return mid;     // знайшли!
+    if (arr[mid] < target) left = mid + 1;   // шукаємо праворуч
+    else right = mid - 1;                     // шукаємо ліворуч
+  }
+
+  return -1; // не знайшли
+}
+
+// У масиві з 1000 елементів:
+// Лінійний: до 1000 перевірок
+// Бінарний: максимум 10 перевірок!`,
+task:{title:"Знайди користувача за ID",
+desc:'Маєш відсортований масив обʼєктів <code>users</code> (кожен має поле <code>id</code>). Напиши функцію <code>findUserById(users, id)</code>, яка використовує бінарний пошук для знаходження користувача.',
+input:"findUserById([{id:1,name:'Anna'},{id:5,name:'Bob'},{id:12,name:'Clara'}], 5)",output:"{id: 5, name: 'Bob'}",
+hint:"Бінарний пошук, але порівнюй <code>users[mid].id</code> з target id.",
+solution:`function findUserById(users, targetId) {
+  let left = 0;
+  let right = users.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (users[mid].id === targetId) return users[mid];
+    if (users[mid].id < targetId) left = mid + 1;
+    else right = mid - 1;
+  }
+
+  return null;
+}
+
+const users = [
+  { id: 1, name: 'Anna' },
+  { id: 5, name: 'Bob' },
+  { id: 12, name: 'Clara' },
+];
+console.log(findUserById(users, 5));
+// { id: 5, name: 'Bob' }`}},
+
+{id:8,emoji:"📊",title:"Sorting — Сортування",subtitle:"Впорядкування елементів",
+explanation:"Bubble Sort: порівнюєш сусідів і міняєш місцями, якщо вони не в порядку. Повторюєш, поки все не відсортовано. Повільний, але простий для розуміння.",
+realWorld:"Товари за ціною, користувачі за датою реєстрації, повідомлення за часом.",
+bigO:"Bubble Sort: O(n²) · Вбудований sort(): O(n log n) — для роботи використовуй sort()",
+diagram:null,
+code:`// Bubble Sort — для розуміння принципу
+function bubbleSort(arr) {
+  const result = [...arr]; // не мутуємо оригінал
+  for (let i = 0; i < result.length; i++) {
+    for (let j = 0; j < result.length - 1 - i; j++) {
+      if (result[j] > result[j + 1]) {
+        // swap — обмін місцями
+        const temp = result[j];
+        result[j] = result[j + 1];
+        result[j + 1] = temp;
+      }
+    }
+  }
+  return result;
+}
+
+console.log(bubbleSort([5, 1, 4, 2, 3]));
+// [1, 2, 3, 4, 5]
+
+// У реальному коді — вбудований sort()
+const prices = [99, 15, 230, 50];
+prices.sort((a, b) => a - b); // [15, 50, 99, 230]`,
+task:{title:"Відсортуй користувачів за віком",
+desc:'Маєш масив обʼєктів <code>users</code>, кожен має поле <code>age</code>. Напиши функцію <code>sortByAge(users)</code>, яка повертає НОВИЙ масив, відсортований за віком від молодшого до старшого.',
+input:"sortByAge([{name:'Bob',age:30},{name:'Anna',age:22},{name:'Clara',age:27}])",output:"[{name:'Anna',age:22},{name:'Clara',age:27},{name:'Bob',age:30}]",
+hint:"Використай <code>[...users].sort((a, b) => a.age - b.age)</code> — не мутуй оригінал!",
+solution:`function sortByAge(users) {
+  return [...users].sort((a, b) => a.age - b.age);
+}
+
+const users = [
+  { name: 'Bob', age: 30 },
+  { name: 'Anna', age: 22 },
+  { name: 'Clara', age: 27 },
+];
+console.log(sortByAge(users));
+// [{name:'Anna',age:22},{name:'Clara',age:27},{name:'Bob',age:30}]`}},
+
+{id:9,emoji:"🔗",title:"Linked List",subtitle:"Ланцюжок вузлів із посиланнями",
+explanation:'Linked List — ланцюг. Кожна ланка (вузол) знає тільки наступну. Щоб дістатися до 5-ї ланки, треба пройти через 1-у, 2-у, 3-ю, 4-у. Немає "індексу" як у масиві.',
+realWorld:"Розуміння покажчиків і памʼяті. У прикладному JS рідко пишеться вручну, але зʼявляється на співбесідах.",
+bigO:"Вставка на початок: O(1) · Пошук: O(n) · Вставка в кінець: O(n)",
+diagram:"linkedlist",
+code:`class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null; // посилання на наступний вузол
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null; // початок ланцюга
+  }
+
+  append(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+      return;
+    }
+    let current = this.head;
+    while (current.next) {
+      current = current.next; // йдемо до кінця
+    }
+    current.next = newNode;
+  }
+
+  print() {
+    let current = this.head;
+    const values = [];
+    while (current) {
+      values.push(current.value);
+      current = current.next;
+    }
+    console.log(values.join(' → '));
+  }
+}
+
+const list = new LinkedList();
+list.append(10);
+list.append(20);
+list.append(30);
+list.print(); // 10 → 20 → 30`,
+task:{title:"Додай метод find(value)",
+desc:'Додай до класу <code>LinkedList</code> метод <code>find(value)</code>, який повертає вузол (Node) з потрібним значенням, або <code>null</code> якщо не знайдено.',
+input:"list.append(10); list.append(20); list.find(20)",output:"Node { value: 20, next: null }",
+input2:"list.find(99)",output2:"null",
+hint:"Починай з <code>this.head</code>. Йди по <code>current.next</code> поки current існує. Якщо <code>current.value === value</code> — повертай current.",
+solution:`// Додай цей метод до класу LinkedList
+find(value) {
+  let current = this.head;
+  while (current) {
+    if (current.value === value) {
+      return current;
+    }
+    current = current.next;
+  }
+  return null;
+}
+
+// Тест:
+const list = new LinkedList();
+list.append(10);
+list.append(20);
+list.append(30);
+console.log(list.find(20)); // Node { value: 20, next: Node }
+console.log(list.find(99)); // null`}},
+
+{id:10,emoji:"#️⃣",title:"Hash Table",subtitle:"Швидкий доступ за ключем",
+explanation:'Hash Table перетворює ключ у число (хеш) і зберігає значення в "комірці" з цим номером. Пошук за ключем — миттєвий, O(1). В JS Object і Map працюють саме так.',
+realWorld:"Кеш, словники, підрахунок повторів, пошук по ID.",
+bigO:"get/set: O(1) в середньому · Найгірший випадок (колізії): O(n)",
+diagram:null,
+code:`// Власна спрощена Hash Table
+class HashTable {
+  constructor(size = 53) {
+    this.table = new Array(size);
+    this.size = size;
+  }
+
+  _hash(key) {
+    let total = 0;
+    for (let i = 0; i < key.length; i++) {
+      total = (total + key.charCodeAt(i)) % this.size;
+    }
+    return total;
+  }
+
+  set(key, value) {
+    const index = this._hash(key);
+    if (!this.table[index]) {
+      this.table[index] = [];
+    }
+    this.table[index].push([key, value]);
+  }
+
+  get(key) {
+    const index = this._hash(key);
+    if (!this.table[index]) return undefined;
+    for (const [k, v] of this.table[index]) {
+      if (k === key) return v;
+    }
+    return undefined;
+  }
+}
+
+const cache = new HashTable();
+cache.set('user:1', { name: 'Anna' });
+console.log(cache.get('user:1')); // { name: 'Anna' }`,
+task:{title:"Знайди перший дублікат email",
+desc:'Напиши функцію <code>firstDuplicateEmail(emails)</code>, яка повертає перший email, що зустрічається вдруге. Якщо дублікатів немає — поверни <code>null</code>.',
+input:"firstDuplicateEmail(['a@m.com', 'b@m.com', 'c@m.com', 'b@m.com'])",output:"'b@m.com'",
+hint:"Використай Set. Для кожного email перевіряй <code>seen.has(email)</code> — якщо true, це дублікат.",
+solution:`function firstDuplicateEmail(emails) {
+  const seen = new Set();
+  for (const email of emails) {
+    if (seen.has(email)) return email;
+    seen.add(email);
+  }
+  return null;
+}
+
+console.log(firstDuplicateEmail([
+  'a@m.com', 'b@m.com', 'c@m.com', 'b@m.com'
+])); // 'b@m.com'`}},
+
+{id:11,emoji:"🌳",title:"Tree — Дерево",subtitle:"Корінь → гілки → листя",
+explanation:"Дерево — це структура, де є один корінь (root), і кожен елемент може мати дітей. DOM в браузері — це дерево. Файлова система — теж.",
+realWorld:"DOM, файлові системи, JSON, меню сайту, категорії товарів, коментарі з відповідями.",
+bigO:"Обхід: O(n) · Пошук у BST: O(log n) в середньому",
+diagram:"tree",
+code:`const fileSystem = {
+  value: 'root',
+  children: [
+    {
+      value: 'src',
+      children: [
+        { value: 'index.js', children: [] },
+        { value: 'utils.js', children: [] },
+      ],
+    },
+    { value: 'package.json', children: [] },
+    { value: 'README.md', children: [] },
+  ],
+};
+
+// Рекурсивний обхід дерева
+function printTree(node, indent = 0) {
+  console.log(' '.repeat(indent * 2) + node.value);
+  for (const child of node.children) {
+    printTree(child, indent + 1);
+  }
+}
+
+printTree(fileSystem);
+// root
+//   src
+//     index.js
+//     utils.js
+//   package.json
+//   README.md`,
+task:{title:"Порахуй вузли в дереві",
+desc:'Напиши рекурсивну функцію <code>countNodes(node)</code>, яка повертає загальну кількість вузлів у дереві (включаючи корінь).',
+input:"countNodes({ value: 'a', children: [{ value: 'b', children: [] }, { value: 'c', children: [{ value: 'd', children: [] }] }] })",output:"4",
+hint:"Базовий випадок: 1 (сам вузол). Рекурсивний крок: 1 + сума <code>countNodes</code> для кожної дитини.",
+solution:`function countNodes(node) {
+  let count = 1; // сам вузол
+  for (const child of node.children) {
+    count += countNodes(child);
+  }
+  return count;
+}
+
+const tree = {
+  value: 'a',
+  children: [
+    { value: 'b', children: [] },
+    {
+      value: 'c',
+      children: [
+        { value: 'd', children: [] }
+      ],
+    },
+  ],
+};
+console.log(countNodes(tree)); // 4`}},
+
+{id:12,emoji:"🕸️",title:"Graph — Граф",subtitle:"Вершини та звʼязки між ними",
+explanation:'Граф — це точки (вершини) і лінії між ними (ребра). На відміну від дерева, звʼязки можуть бути будь-якими — навіть циклічними. Соцмережа: ти "друг" когось, а той — друг когось іншого.',
+realWorld:"Соціальні мережі, маршрути, залежності npm, рекомендації, GPS навігація.",
+bigO:"BFS/DFS: O(V + E) де V — вершини, E — ребра",
+diagram:null,
+code:`// Граф через Map (adjacency list)
+const graph = new Map();
+graph.set('A', ['B', 'C']);
+graph.set('B', ['A', 'D']);
+graph.set('C', ['A', 'D']);
+graph.set('D', ['B', 'C']);
+
+// BFS — пошук у ширину (рівень за рівнем)
+function bfs(graph, start) {
+  const visited = new Set();
+  const queue = [start];
+  const result = [];
+  visited.add(start);
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+    result.push(node);
+
+    for (const neighbor of graph.get(node)) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+  return result;
+}
+
+console.log(bfs(graph, 'A')); // ['A', 'B', 'C', 'D']`,
+task:{title:"Напиши DFS — пошук у глибину",
+desc:'Напиши функцію <code>dfs(graph, start)</code>, яка обходить граф у глибину і повертає масив відвіданих вершин. Використай рекурсію.',
+input:"dfs(graph, 'A')  // graph з прикладу коду",output:"['A', 'B', 'D', 'C']  // порядок може відрізнятись",
+hint:"Створи Set для visited. Рекурсивна функція: додай вершину в visited і result, потім для кожного сусіда — якщо не відвіданий, виклич рекурсію.",
+solution:`function dfs(graph, start) {
+  const visited = new Set();
+  const result = [];
+
+  function traverse(node) {
+    visited.add(node);
+    result.push(node);
+
+    for (const neighbor of graph.get(node)) {
+      if (!visited.has(neighbor)) {
+        traverse(neighbor);
+      }
+    }
+  }
+
+  traverse(start);
+  return result;
+}
+
+console.log(dfs(graph, 'A')); // ['A', 'B', 'D', 'C']`}},
+
+{id:13,emoji:"🧩",title:"Dynamic Programming",subtitle:"Не рахуй одне й те саме двічі",
+explanation:'DP — це підхід: якщо вже рахував результат, збережи його (memo). Наступного разу не рахуй знову, а візьми готовий. Це перетворює "дуже повільно" на "дуже швидко".',
+realWorld:"Оптимізація, кешування, маршрути, підрахунок варіантів, задачі на мінімум/максимум.",
+bigO:"Фібоначчі без memo: O(2ⁿ) → з memo: O(n) — колосальна різниця!",
+diagram:null,
+code:`// Фібоначчі БЕЗ memo — дуже повільно для великих n
+function fibSlow(n) {
+  if (n <= 1) return n;
+  return fibSlow(n - 1) + fibSlow(n - 2);
+}
+
+// Фібоначчі З memo — блискавично
+function fibonacci(n, memo = {}) {
+  if (n <= 1) return n;
+  if (memo[n]) return memo[n]; // вже рахували!
+
+  memo[n] = fibonacci(n - 1, memo)
+           + fibonacci(n - 2, memo);
+  return memo[n];
+}
+
+console.log(fibonacci(10)); // 55
+console.log(fibonacci(50)); // 12586269025
+// fibSlow(50) — зависне на хвилини!`,
+task:{title:"Сходинки: 1 або 2 кроки",
+desc:'Ти стоїш внизу сходів із <code>n</code> сходинок. За раз можеш піднятися на 1 або 2 сходинки. Напиши функцію <code>climbStairs(n)</code>, яка повертає кількість різних способів піднятися. Використай memo!',
+input:"climbStairs(4)",output:"5  // способи: 1111, 112, 121, 211, 22",
+hint:"Це Фібоначчі! <code>climbStairs(n) = climbStairs(n-1) + climbStairs(n-2)</code>. Базові випадки: <code>climbStairs(1) = 1, climbStairs(2) = 2</code>.",
+solution:`function climbStairs(n, memo = {}) {
+  if (n === 1) return 1;
+  if (n === 2) return 2;
+  if (memo[n]) return memo[n];
+
+  memo[n] = climbStairs(n - 1, memo)
+           + climbStairs(n - 2, memo);
+  return memo[n];
+}
+
+console.log(climbStairs(4));  // 5
+console.log(climbStairs(10)); // 89`}}
+];
+
+// ===================== SYNTAX HIGHLIGHTING =====================
+function highlightJS(code) {
+  let html = code
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // comments
+    .replace(/(\/\/.*)/g,'<span class="cmt">$1</span>')
+    // strings
+    .replace(/('(?:[^'\\]|\\.)*')/g,'<span class="str">$1</span>')
+    .replace(/("(?:[^"\\]|\\.)*")/g,'<span class="str">$1</span>')
+    .replace(/(`(?:[^`\\]|\\.)*`)/g,'<span class="str">$1</span>')
+    // keywords
+    .replace(/\b(const|let|var|function|return|if|else|for|while|class|constructor|new|of|in|this|typeof|null|undefined|true|false|import|export|default|break|continue|switch|case|throw|try|catch)\b/g,'<span class="kw">$1</span>')
+    // class names after new/class
+    .replace(/\b(new|class)\b <span class="kw">(\w+)<\/span>/g,'<span class="kw">$1</span> <span class="cls">$2</span>')
+    // numbers
+    .replace(/\b(\d+)\b/g,'<span class="num">$1</span>')
+    // console.log
+    .replace(/\bconsole\b/g,'<span class="bi">console</span>')
+    .replace(/\bMath\b/g,'<span class="bi">Math</span>');
+  return html;
+}
+
+// ===================== DIAGRAMS =====================
+function renderDiagram(type) {
+  if (type === 'array') {
+    const items = [{i:0,v:'12'},{i:1,v:'7'},{i:2,v:'25'},{i:3,v:'3'},{i:4,v:'18'}];
+    return `<div class="diagram diagram-array">${items.map(it =>
+      `<div><div class="cell">${it.v}</div><div class="idx">[${it.i}]</div></div>`
+    ).join('')}</div>`;
+  }
+  if (type === 'stack') {
+    return `<div class="diagram diagram-stack">
+      <div class="lbl">← pop() / push() →</div>
+      <div class="cell top">30 <small style="margin-left:8px;font-size:10px;opacity:.7">← top</small></div>
+      <div class="cell">20</div>
+      <div class="cell">10</div>
+    </div>`;
+  }
+  if (type === 'queue') {
+    return `<div class="diagram diagram-queue">
+      <div class="dir out">dequeue ←</div>
+      <div class="cell first">task1</div>
+      <div class="cell">task2</div>
+      <div class="cell">task3</div>
+      <div class="dir in">→ enqueue</div>
+    </div>`;
+  }
+  if (type === 'linkedlist') {
+    return `<div class="diagram diagram-ll">
+      <span class="head-lbl">head→</span>
+      <span class="node">10</span><span class="arrow">→</span>
+      <span class="node">20</span><span class="arrow">→</span>
+      <span class="node">30</span><span class="arrow" style="font-size:11px">→ null</span>
+    </div>`;
+  }
+  if (type === 'tree') {
+    return `<div class="diagram diagram-tree">
+      <div><span class="tn root">10</span></div>
+      <div class="branches">╱ &nbsp; ╲</div>
+      <div class="tree-row"><span class="tn mid">5</span><span class="tn mid">20</span></div>
+      <div class="branches" style="margin-left:-30px">╱ &nbsp; ╲</div>
+      <div class="tree-row-sm"><span class="tn leaf">2</span><span class="tn leaf">7</span></div>
+    </div>`;
+  }
+  return '';
+}
+
+// ===================== RENDER =====================
+function renderNav() {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = TOPICS.map(t =>
+    `<button class="nav-btn" onclick="scrollToTopic(${t.id})" id="nav-${t.id}">${t.emoji} ${t.title.split(' — ')[0].split(' ').slice(0,2).join(' ')}</button>`
+  ).join('');
+}
+
+function renderTopics() {
+  const container = document.getElementById('topics');
+  container.innerHTML = TOPICS.map(t => {
+    const taskHtml = renderTask(t.task);
+    return `
+    <div class="topic" id="topic-${t.id}">
+      <button class="topic-header" onclick="toggleTopic(${t.id})">
+        <span class="topic-emoji">${t.emoji}</span>
+        <div class="topic-info">
+          <div class="topic-title">
+            ${t.title}
+            ${t.isNew ? '<span class="badge-new">НОВА</span>' : ''}
+          </div>
+          <div class="topic-sub">${t.subtitle}</div>
+        </div>
+        <span class="topic-chevron">▾</span>
+      </button>
+      <div class="topic-body">
+        <div class="explain-box">
+          <div class="explain-label">Пояснення</div>
+          <div class="explain-text">${t.explanation}</div>
+        </div>
+        <div class="meta-real"><b>Де в реальності:</b> ${t.realWorld}</div>
+        ${t.bigO ? `<div class="bigo">⏱ ${t.bigO}</div>` : ''}
+        ${t.diagram ? renderDiagram(t.diagram) : ''}
+        <div class="code-label">Код</div>
+        <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(t.code)}</code></pre>
+        ${taskHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTask(task) {
+  let ioHtml = `
+    <div class="task-io">
+      <div><span class="lbl in">Вхід: </span>${escHtml(task.input)}</div>
+      <div><span class="lbl out">Вихід: </span>${escHtml(task.output)}</div>
+    </div>`;
+  if (task.input2) {
+    ioHtml += `<div class="task-io">
+      <div><span class="lbl in2">Вхід 2: </span>${escHtml(task.input2)}</div>
+      <div><span class="lbl out2">Вихід 2: </span>${escHtml(task.output2)}</div>
+    </div>`;
+  }
+  return `
+    <div class="task">
+      <div class="task-head"><span>✏️</span><span class="task-title">${task.title}</span></div>
+      <div class="task-desc">${task.desc}</div>
+      ${ioHtml}
+      <div class="hint-box"><b>Підказка:</b> ${task.hint}</div>
+      <button class="solution-toggle" onclick="toggleSolution(this)">Показати рішення ▼</button>
+      <div class="solution-code">
+        <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(task.solution)}</code></pre>
+      </div>
+    </div>`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===================== INTERACTIONS =====================
+let openTopicId = null;
+
+function toggleTopic(id) {
+  const prev = openTopicId;
+  if (prev !== null) {
+    document.getElementById(`topic-${prev}`).classList.remove('open');
+    document.getElementById(`nav-${prev}`)?.classList.remove('active');
+  }
+  if (prev === id) {
+    openTopicId = null;
+    return;
+  }
+  openTopicId = id;
+  const el = document.getElementById(`topic-${id}`);
+  el.classList.add('open');
+  document.getElementById(`nav-${id}`)?.classList.add('active');
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+function scrollToTopic(id) {
+  toggleTopic(id);
+}
+
+function toggleSolution(btn) {
+  const code = btn.nextElementSibling;
+  const isOpen = code.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.textContent = isOpen ? 'Сховати рішення ▲' : 'Показати рішення ▼';
+}
+
+function toggleValidation() {
+  const body = document.getElementById('val-body');
+  const chevron = document.getElementById('val-chevron');
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? 'block' : 'none';
+  chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0)';
+}
+
+function copyCode(btn) {
+  const code = btn.parentElement.querySelector('code');
+  const text = code.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  renderNav();
+  renderTopics();
+  // start with validation open
+  document.getElementById('val-chevron').style.transform = 'rotate(180deg)';
+});
+</script>
+</body>
+</html>

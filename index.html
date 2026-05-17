@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Міні-Курси — для JavaScript / Node.js розробників</title>
+<meta name="description" content="Безкоштовні міні-курси для JavaScript та Node.js розробників: REST API, алгоритми та структури даних.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e17;--surface:#121824;--surface2:#181f32;--border:#252d40;
+  --text:#dfe6f0;--text-muted:#6b7a94;
+  --accent:#4a8eff;--green:#34d058;--purple:#a78bfa;--orange:#f0883e;
+  --font-body:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Fira Code',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+/* ===== HERO ===== */
+.hero{text-align:center;padding:80px 20px 60px;position:relative;overflow:hidden}
+.hero::before{
+  content:'';position:absolute;top:-150px;left:50%;transform:translateX(-50%);
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(74,142,255,.08) 0%,transparent 70%);
+  pointer-events:none
+}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.hero h1{
+  font-size:clamp(30px,6vw,52px);font-weight:800;line-height:1.12;margin-bottom:16px;
+  background:linear-gradient(135deg,#4a8eff 0%,#a78bfa 50%,#f0883e 100%);
+  background-size:200% 200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 8s ease-in-out infinite
+}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-sub{color:var(--text-muted);font-size:16px;max-width:560px;margin:0 auto 12px}
+.hero-badge{
+  display:inline-block;margin-top:20px;padding:6px 16px;border-radius:20px;
+  font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(52,208,88,.12);color:var(--green);border:1px solid rgba(52,208,88,.3)
+}
+
+/* ===== GRID ===== */
+.courses{max-width:900px;margin:0 auto;padding:20px 20px 80px;display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:24px}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:32px;display:flex;flex-direction:column;gap:20px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;text-decoration:none;color:inherit;
+  position:relative;overflow:hidden
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:16px 16px 0 0
+}
+.card--blue::before{background:linear-gradient(90deg,#4a8eff,#a78bfa)}
+.card--orange::before{background:linear-gradient(90deg,#f0883e,#ffd866)}
+
+.card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.card--blue:hover{border-color:rgba(74,142,255,.4)}
+.card--orange:hover{border-color:rgba(240,136,62,.4)}
+
+.card-icon{font-size:36px;line-height:1}
+.card-meta{display:flex;flex-direction:column;gap:8px}
+.card-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+.card--blue .card-label{color:var(--accent)}
+.card--orange .card-label{color:var(--orange)}
+.card-title{font-size:22px;font-weight:800;line-height:1.25}
+.card-desc{color:var(--text-muted);font-size:14px;line-height:1.6}
+
+.card-tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;
+  font-family:var(--font-mono);background:var(--surface2);color:var(--text-muted);
+  border:1px solid var(--border)
+}
+
+.card-cta{
+  margin-top:auto;display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;
+  transition:opacity .2s;align-self:flex-start
+}
+.card--blue .card-cta{background:linear-gradient(135deg,#4a8eff,#6ba3ff);color:#fff}
+.card--orange .card-cta{background:linear-gradient(135deg,#f0883e,#ffa96e);color:#fff}
+.card-cta:hover{opacity:.88}
+.card-cta svg{width:16px;height:16px;flex-shrink:0}
+
+/* ===== FOOTER ===== */
+footer{text-align:center;padding:24px 20px;color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);margin-top:auto}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-label">Безкоштовно · Українською</div>
+  <h1>JS Міні-Курси</h1>
+  <p class="hero-sub">Короткі практичні курси для JavaScript та Node.js розробників — з поясненнями, кодом і задачами</p>
+  <span class="hero-badge">✓ Безкоштовно</span>
+</section>
+
+<div class="courses">
+
+  <a href="algorithms.html" class="card card--blue">
+    <div class="card-icon">⚡</div>
+    <div class="card-meta">
+      <span class="card-label">Алгоритми & Структури даних</span>
+      <h2 class="card-title">JS Algorithms &amp; Data Structures</h2>
+      <p class="card-desc">14 тем: масиви, стеки, черги, дерева, графи, сортування, пошук і складність алгоритмів — з поясненнями та кодом на JavaScript.</p>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Big O</span>
+      <span class="tag">Sort</span>
+      <span class="tag">Graph</span>
+      <span class="tag">Tree</span>
+      <span class="tag">Hash Map</span>
+    </div>
+    <span class="card-cta">
+      Відкрити курс
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </span>
+  </a>
+
+  <a href="rest-api.html" class="card card--orange">
+    <div class="card-icon">🌐</div>
+    <div class="card-meta">
+      <span class="card-label">REST API</span>
+      <h2 class="card-title">REST API для новачків</h2>
+      <p class="card-desc">HTTP методи, статус-коди, заголовки, автентифікація, CORS, версіонування та практичні задачі для Node.js розробника.</p>
+    </div>
+    <div class="card-tags">
+      <span class="tag">HTTP</span>
+      <span class="tag">JSON</span>
+      <span class="tag">Auth</span>
+      <span class="tag">CORS</span>
+      <span class="tag">Node.js</span>
+    </div>
+    <span class="card-cta">
+      Відкрити курс
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </span>
+  </a>
+
+</div>
+
+<footer>Зроблено для розробників &mdash; відкритий доступ</footer>
+
+</body>
+</html>

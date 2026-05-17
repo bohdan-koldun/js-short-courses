@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REST API — Курс для новачків</title>
+<meta name="description" content="REST API для JavaScript / Node.js розробника. HTTP методи, статус-коди, заголовки, автентифікація, задачі з кодом.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e17;--surface:#121824;--surface2:#181f32;--border:#252d40;
+  --border-active:#4a8eff;--text:#dfe6f0;--text-muted:#6b7a94;
+  --accent:#4a8eff;--green:#34d058;--yellow:#e3a832;--red:#f0564a;
+  --purple:#a78bfa;--orange:#f0883e;--code-bg:#0c1018;
+  --font-body:'Manrope',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Fira Code',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+.hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(240,136,62,.1) 0%,transparent 70%);pointer-events:none}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--orange);margin-bottom:12px;text-transform:uppercase}
+.hero h1{font-size:clamp(26px,5vw,42px);font-weight:800;line-height:1.15;margin-bottom:10px;background:linear-gradient(135deg,#f0883e 0%,#ffd866 50%,#f0883e 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 6s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-sub{color:var(--text-muted);font-size:15px;max-width:520px;margin:0 auto}
+.hero-tags{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.hero-tag{background:rgba(240,136,62,.08);border:1px solid rgba(240,136,62,.18);border-radius:99px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--orange)}
+
+.container{max-width:780px;margin:0 auto;padding:0 16px 60px}
+
+.nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:32px;padding:16px;background:var(--surface);border-radius:14px;border:1px solid var(--border)}
+.nav-btn{background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{color:var(--text);background:var(--surface2);border-color:var(--border)}
+.nav-btn.active{color:var(--orange);background:rgba(240,136,62,.1);border-color:rgba(240,136,62,.25)}
+
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase}
+
+.topic{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .25s}
+.topic.open{border-color:rgba(240,136,62,.4)}
+.topic-header{width:100%;display:flex;align-items:center;gap:14px;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font-body)}
+.topic-emoji{font-size:26px;flex-shrink:0;width:36px;text-align:center}
+.topic-info{flex:1;min-width:0}
+.topic-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topic-sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.topic-chevron{color:var(--text-muted);font-size:18px;transition:transform .25s;flex-shrink:0}
+.topic.open .topic-chevron{transform:rotate(180deg)}
+.topic-body{padding:0 20px 22px;display:none}
+.topic.open .topic-body{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+.explain-box{background:var(--bg);border-radius:10px;padding:16px 18px;margin-bottom:14px;border-left:3px solid var(--orange)}
+.explain-label{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+.explain-text{font-size:14px;line-height:1.7;color:var(--text)}
+
+.meta-real{font-size:13px;color:var(--text-muted);margin-bottom:14px}
+.meta-real b{color:var(--purple);font-weight:600}
+.keyfact{display:inline-block;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:5px 14px;font-size:12px;font-family:var(--font-mono);color:var(--purple);font-weight:600;margin-bottom:14px}
+
+/* ===== DIAGRAMS ===== */
+.diagram{margin:16px 0 18px}
+.http-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--font-mono);font-size:13px}
+.http-flow .box{padding:10px 16px;border-radius:8px;font-weight:600;text-align:center}
+.http-flow .client{background:rgba(74,142,255,.1);border:1px solid rgba(74,142,255,.3);color:var(--accent)}
+.http-flow .arrow{color:var(--text-muted);font-size:18px}
+.http-flow .server{background:rgba(52,208,88,.1);border:1px solid rgba(52,208,88,.3);color:var(--green)}
+.http-flow .label{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+.method-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.method-table th{text-align:left;padding:8px 12px;background:var(--bg);color:var(--text-muted);font-weight:600;font-size:11px;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.method-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.method-table tr:last-child td{border-bottom:none}
+.method-badge{display:inline-block;padding:2px 10px;border-radius:5px;font-family:var(--font-mono);font-weight:700;font-size:12px;letter-spacing:.3px}
+.method-badge.get{background:rgba(52,208,88,.12);color:var(--green);border:1px solid rgba(52,208,88,.2)}
+.method-badge.post{background:rgba(74,142,255,.12);color:var(--accent);border:1px solid rgba(74,142,255,.2)}
+.method-badge.put{background:rgba(240,136,62,.12);color:var(--orange);border:1px solid rgba(240,136,62,.2)}
+.method-badge.patch{background:rgba(227,168,50,.12);color:var(--yellow);border:1px solid rgba(227,168,50,.2)}
+.method-badge.delete{background:rgba(240,86,74,.12);color:var(--red);border:1px solid rgba(240,86,74,.2)}
+
+.status-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:12px 0}
+.status-card{background:var(--bg);border-radius:8px;padding:10px 14px;border:1px solid var(--border)}
+.status-code{font-family:var(--font-mono);font-weight:700;font-size:15px;margin-bottom:2px}
+.status-code.s2{color:var(--green)}.status-code.s3{color:var(--yellow)}.status-code.s4{color:var(--orange)}.status-code.s5{color:var(--red)}
+.status-name{font-size:12px;color:var(--text-muted)}
+
+.code-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+pre.code{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.7;color:#c9d1d9;font-family:var(--font-mono);margin:0 0 16px;tab-size:2;position:relative}
+pre.code .kw{color:#ff7b72}pre.code .fn{color:#d2a8ff}pre.code .str{color:#a5d6ff}pre.code .num{color:#79c0ff}pre.code .cmt{color:#484f58;font-style:italic}pre.code .cls{color:#ffa657}pre.code .bi{color:#79c0ff}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:var(--font-mono);transition:all .2s;opacity:0}
+pre.code:hover .copy-btn{opacity:1}
+.copy-btn:hover{color:var(--text);border-color:var(--orange)}
+.copy-btn.copied{color:var(--green);border-color:var(--green)}
+
+.task{background:rgba(227,168,50,.06);border:1px solid rgba(227,168,50,.18);border-radius:12px;padding:18px;margin-top:16px}
+.task-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.task-title{font-weight:700;color:var(--yellow);font-size:15px}
+.task-desc{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:10px}
+.task-io{font-family:var(--font-mono);font-size:12.5px;color:var(--text-muted);margin:8px 0}
+.task-io .lbl{font-weight:600}
+.task-io .lbl.in{color:var(--green)}.task-io .lbl.out{color:var(--green)}
+.task-io .lbl.in2{color:var(--red)}.task-io .lbl.out2{color:var(--red)}
+.hint-box{background:rgba(74,142,255,.06);border:1px solid rgba(74,142,255,.12);border-radius:8px;padding:8px 14px;margin:12px 0;font-size:13px;color:var(--accent)}
+.hint-box b{font-weight:600}
+.solution-toggle{background:transparent;border:1px solid rgba(227,168,50,.3);border-radius:8px;padding:7px 18px;color:var(--yellow);cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font-body);transition:all .2s}
+.solution-toggle:hover{background:rgba(227,168,50,.1)}
+.solution-toggle.open{background:rgba(227,168,50,.1)}
+.solution-code{display:none;margin-top:12px}
+.solution-code.open{display:block;animation:fadeIn .3s ease}
+
+.footer{text-align:center;padding:24px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:40px}
+.footer a{color:var(--orange)}
+
+@media(max-width:600px){
+  .hero{padding:40px 16px 28px}
+  .topic-header{padding:14px 16px;gap:10px}
+  .topic-body{padding:0 16px 18px}
+  .nav{padding:12px;gap:4px}
+  .nav-btn{font-size:10px;padding:5px 8px}
+  .status-grid{grid-template-columns:1fr}
+  .http-flow{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Курс для новачків</div>
+  <h1>REST API<br>для JavaScript розробника</h1>
+  <p class="hero-sub">Що таке API, HTTP методи, статус-коди, заголовки, авторизація — з прикладами на fetch() і задачами.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">12 тем</span>
+    <span class="hero-tag">fetch() / Node.js</span>
+    <span class="hero-tag">HTTP коди</span>
+    <span class="hero-tag">Задачі + рішення</span>
+  </div>
+</div>
+
+<div class="container">
+<nav class="nav" id="nav"></nav>
+<div class="section-label">ТЕМИ КУРСУ</div>
+<div id="topics"></div>
+<div class="footer">
+  Порада: відкрий DevTools → Network щоб бачити запити в реальному часі<br>
+  <a href="https://jsonplaceholder.typicode.com" target="_blank">jsonplaceholder.typicode.com</a> — безкоштовний API для практики
+</div>
+</div>
+
+<script>
+const TOPICS = [
+
+// ==================== 0. WHAT IS API ====================
+{id:0,emoji:"🌐",title:"Що таке API",subtitle:"Інтерфейс для спілкування програм",
+explanation:'API (Application Programming Interface) — це офіціант у ресторані. Ти (клієнт) не йдеш на кухню сам. Ти кажеш офіціанту (API) що хочеш, він несе замовлення на кухню (сервер) і повертає тобі страву (відповідь).',
+realWorld:"Коли ти відкриваєш погоду на телефоні — додаток робить запит до API погодного сервісу. Коли логінишся через Google — це теж API.",
+keyFact:"API = контракт між клієнтом і сервером: \"надішли мені ЦЕ, я поверну ТАКЕ\"",
+diagram:"http-flow",
+code:`// Найпростіший API запит у JavaScript
+const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+const user = await response.json();
+
+console.log(user.name);  // "Leanne Graham"
+console.log(user.email); // "Sincere@april.biz"
+
+// Що тут сталося:
+// 1. fetch() відправив HTTP запит на сервер
+// 2. Сервер знайшов користувача з id=1
+// 3. Сервер повернув JSON з даними
+// 4. .json() перетворив відповідь на JS обʼєкт`,
+task:{title:"Зроби свій перший запит",
+desc:'Зроби GET запит на <code>https://jsonplaceholder.typicode.com/posts/1</code> і виведи <code>title</code> поста.',
+input:"fetch → /posts/1",output:'Відповідь: "sunt aut facere repellat provident..."',
+hint:"Використай <code>fetch(url)</code>, потім <code>.json()</code> щоб розпарсити відповідь.",
+solution:`async function getPost() {
+  const response = await fetch(
+    'https://jsonplaceholder.typicode.com/posts/1'
+  );
+  const post = await response.json();
+  console.log(post.title);
+  // "sunt aut facere repellat provident
+  //  occaecati excepturi optio reprehenderit"
+}
+
+getPost();`}},
+
+// ==================== 1. REST ====================
+{id:1,emoji:"📐",title:"Що таке REST",subtitle:"Архітектурний стиль для API",
+explanation:'REST (Representational State Transfer) — це набір правил, як будувати API. Головне: кожна "річ" (користувач, пост, товар) має свій URL. Дії над нею — це HTTP методи (GET, POST, PUT, DELETE). REST — не бібліотека, не фреймворк. Це договір, як спілкуватися.',
+realWorld:"95% публічних API — REST: GitHub API, Twitter API, Stripe, Google Maps. Це стандарт індустрії.",
+keyFact:"REST = Ресурс (URL) + Дія (HTTP метод) + Формат (зазвичай JSON)",
+diagram:null,
+code:`// REST — це конвенція іменування:
+//
+// GET    /users       — отримати всіх користувачів
+// GET    /users/1     — отримати одного (id=1)
+// POST   /users       — створити нового
+// PUT    /users/1     — замінити повністю
+// PATCH  /users/1     — оновити частково
+// DELETE /users/1     — видалити
+//
+// Ресурс = іменник у множині: /users, /posts, /products
+// Метод  = дієслово: GET (читай), POST (створи)
+// НЕ правильно: GET /getUsers, POST /createUser
+// Правильно:    GET /users,    POST /users
+
+// Вкладені ресурси:
+// GET /users/1/posts — пости користувача 1
+// GET /posts/5/comments — коментарі до поста 5`,
+task:{title:"Спроектуй REST URL-и",
+desc:'Ти будуєш API для інтернет-магазину. Напиши правильні REST URL-и для: отримати всі товари, отримати товар з id=7, створити новий товар, видалити товар з id=3, отримати відгуки на товар з id=7.',
+input:"5 операцій для магазину",output:"5 правильних REST URL-ів",
+hint:"Ресурс — <code>/products</code>. Вкладений ресурс — <code>/products/7/reviews</code>.",
+solution:`// Отримати всі товари
+// GET /products
+
+// Отримати товар з id=7
+// GET /products/7
+
+// Створити новий товар
+// POST /products
+
+// Видалити товар з id=3
+// DELETE /products/3
+
+// Відгуки на товар з id=7
+// GET /products/7/reviews`}},
+
+// ==================== 2. HTTP METHODS ====================
+{id:2,emoji:"📬",title:"HTTP методи",subtitle:"GET, POST, PUT, PATCH, DELETE",
+explanation:'HTTP метод — це дія, яку ти хочеш виконати. GET — прочитати (як відкрити книгу). POST — створити (як написати новий лист). PUT — замінити повністю (як переписати сторінку). PATCH — підправити (як виправити помилку олівцем). DELETE — видалити (як викинути лист у кошик).',
+realWorld:"Кожна кнопка на сайті — це HTTP метод. \"Зареєструватися\" — POST. \"Мій профіль\" — GET. \"Зберегти зміни\" — PATCH. \"Видалити акаунт\" — DELETE.",
+keyFact:"GET = безпечний (не змінює дані) · POST/PUT/PATCH/DELETE = небезпечні (змінюють дані)",
+diagram:"methods-table",
+code:`// GET — отримати дані
+const users = await fetch('/api/users');
+
+// POST — створити (передаємо body з даними)
+const created = await fetch('/api/users', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'Anna',
+    email: 'anna@mail.com'
+  })
+});
+
+// PUT — замінити повністю
+await fetch('/api/users/1', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'Anna Updated',
+    email: 'anna.new@mail.com'
+  })
+});
+
+// PATCH — оновити частково (тільки email)
+await fetch('/api/users/1', {
+  method: 'PATCH',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'new@mail.com' })
+});
+
+// DELETE — видалити
+await fetch('/api/users/1', { method: 'DELETE' });`,
+task:{title:"Створи нового користувача через POST",
+desc:'Зроби POST запит на <code>https://jsonplaceholder.typicode.com/users</code> з body: <code>{ name: "Test User", email: "test@test.com" }</code>. Виведи відповідь сервера.',
+input:'POST /users з name і email',output:'Обʼєкт з id, name, email (id буде 11)',
+hint:"Не забудь <code>method: 'POST'</code>, заголовок <code>Content-Type: application/json</code> і <code>JSON.stringify()</code> для body.",
+solution:`async function createUser() {
+  const response = await fetch(
+    'https://jsonplaceholder.typicode.com/users',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: 'Test User',
+        email: 'test@test.com',
+      }),
+    }
+  );
+
+  const data = await response.json();
+  console.log(data);
+  // { id: 11, name: 'Test User', email: 'test@test.com' }
+}
+
+createUser();`}},
+
+// ==================== 3. STATUS CODES ====================
+{id:3,emoji:"🚦",title:"HTTP статус-коди",subtitle:"200, 201, 400, 401, 404, 500...",
+explanation:'Статус-код — це коротка відповідь сервера: що сталося з твоїм запитом. 2xx — все ОК. 3xx — перенаправлення. 4xx — ТИ помилився (невірний запит). 5xx — СЕРВЕР помилився. Запамʼятай: 4xx = твоя проблема, 5xx = їхня проблема.',
+realWorld:"404 бачив кожен — \"сторінку не знайдено\". 401 — \"спочатку залогінься\". 500 — \"щось зламалось на сервері, не твоя вина\".",
+keyFact:"2xx = успіх · 3xx = редирект · 4xx = помилка клієнта · 5xx = помилка сервера",
+diagram:"status-codes",
+code:`// Перевірка статус-коду у відповіді
+async function getUser(id) {
+  const response = await fetch(\`/api/users/\${id}\`);
+
+  console.log(response.status);    // 200, 404, 500...
+  console.log(response.ok);        // true якщо 200-299
+  console.log(response.statusText); // "OK", "Not Found"...
+
+  if (!response.ok) {
+    throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+  }
+
+  return response.json();
+}
+
+// Типові коди, які повертає сервер:
+// GET  /users/1    → 200 OK (знайшли)
+// POST /users      → 201 Created (створили)
+// PUT  /users/1    → 200 OK (оновили)
+// DELETE /users/1  → 204 No Content (видалили, тіла немає)
+// GET  /users/999  → 404 Not Found (немає такого)
+// POST /users      → 400 Bad Request (невалідні дані)
+// GET  /admin      → 401 Unauthorized (не залогінений)
+// GET  /admin      → 403 Forbidden (немає прав)
+// POST /users      → 500 Internal Server Error (баг сервера)`,
+task:{title:"Обробка різних статус-кодів",
+desc:'Напиши функцію <code>fetchWithStatus(url)</code>, яка робить GET запит і повертає обʼєкт <code>{ status, ok, data }</code>. Якщо <code>response.ok</code> — <code>data</code> = розпарсений JSON. Якщо ні — <code>data</code> = null.',
+input:'fetchWithStatus("https://jsonplaceholder.typicode.com/posts/1")',output:'{ status: 200, ok: true, data: { id: 1, title: "..." } }',
+input2:'fetchWithStatus("https://jsonplaceholder.typicode.com/posts/99999")',output2:'{ status: 404, ok: false, data: null }',
+hint:"Перевіряй <code>response.ok</code> перед викликом <code>.json()</code>. Якщо не ok — поверни data: null.",
+solution:`async function fetchWithStatus(url) {
+  const response = await fetch(url);
+
+  return {
+    status: response.status,
+    ok: response.ok,
+    data: response.ok
+      ? await response.json()
+      : null,
+  };
+}
+
+// Тест 1: існуючий пост
+const result1 = await fetchWithStatus(
+  'https://jsonplaceholder.typicode.com/posts/1'
+);
+console.log(result1);
+// { status: 200, ok: true, data: { id: 1, ... } }
+
+// Тест 2: неіснуючий пост
+const result2 = await fetchWithStatus(
+  'https://jsonplaceholder.typicode.com/posts/99999'
+);
+console.log(result2);
+// { status: 404, ok: false, data: null }`}},
+
+// ==================== 4. HEADERS ====================
+{id:4,emoji:"📋",title:"HTTP заголовки (Headers)",subtitle:"Метадані кожного запиту і відповіді",
+explanation:'Заголовки — це \"записка\", яку ти прикладаєш до листа. Вони не є самим повідомленням, але пояснюють ЯК його читати. Content-Type каже: \"дані у форматі JSON\". Authorization каже: \"ось мій пропуск\". Accept каже: \"я хочу отримати JSON назад\".',
+realWorld:"Кожен API запит має заголовки. Без Content-Type сервер не зрозуміє формат. Без Authorization — не пустить.",
+keyFact:"Content-Type — що я ВІДПРАВЛЯЮ · Accept — що я ХОЧУ ОТРИМАТИ · Authorization — хто я",
+diagram:null,
+code:`// Заголовки запиту (Request Headers)
+const response = await fetch('/api/data', {
+  headers: {
+    // Формат даних, які я відправляю
+    'Content-Type': 'application/json',
+
+    // Формат, який хочу отримати назад
+    'Accept': 'application/json',
+
+    // Токен авторизації
+    'Authorization': 'Bearer eyJhbGciOiJI...',
+
+    // Свої кастомні заголовки
+    'X-Request-Id': 'abc-123',
+  }
+});
+
+// Заголовки відповіді (Response Headers)
+console.log(response.headers.get('Content-Type'));
+// "application/json; charset=utf-8"
+
+console.log(response.headers.get('X-RateLimit-Remaining'));
+// "59" — скільки запитів залишилось
+
+// Побачити всі заголовки
+for (const [key, value] of response.headers) {
+  console.log(\`\${key}: \${value}\`);
+}`,
+task:{title:"Прочитай заголовки відповіді",
+desc:'Зроби GET запит на <code>https://jsonplaceholder.typicode.com/posts</code>. Виведи значення заголовків <code>content-type</code> та <code>cache-control</code> з відповіді.',
+input:"GET /posts → response.headers",output:'content-type: "application/json; charset=utf-8"',
+hint:"Використай <code>response.headers.get('content-type')</code>. Назви заголовків — case-insensitive.",
+solution:`async function readHeaders() {
+  const response = await fetch(
+    'https://jsonplaceholder.typicode.com/posts'
+  );
+
+  const contentType = response.headers.get('content-type');
+  const cacheControl = response.headers.get('cache-control');
+
+  console.log('Content-Type:', contentType);
+  // "application/json; charset=utf-8"
+
+  console.log('Cache-Control:', cacheControl);
+  // "max-age=43200" (або інше значення)
+}
+
+readHeaders();`}},
+
+// ==================== 5. JSON ====================
+{id:5,emoji:"📦",title:"JSON — формат даних",subtitle:"JavaScript Object Notation",
+explanation:'JSON — це текстовий формат для передачі даних. Виглядає як JS обʼєкт, але є рядком. Ключі ОБОВЯЗКОВО в подвійних лапках. Немає функцій, undefined, коментарів. Тільки дані: рядки, числа, boolean, null, масиви, обʼєкти.',
+realWorld:"99% API повертають JSON. Конфігурації (package.json). Зберігання даних. Обмін між мовами (Python ↔ JS ↔ Java).",
+keyFact:'JSON.stringify() — обʼєкт → рядок · JSON.parse() — рядок → обʼєкт',
+diagram:null,
+code:`// JS обʼєкт → JSON рядок
+const user = { name: 'Anna', age: 25, active: true };
+const jsonString = JSON.stringify(user);
+console.log(jsonString);
+// '{"name":"Anna","age":25,"active":true}'
+console.log(typeof jsonString); // "string"
+
+// JSON рядок → JS обʼєкт
+const parsed = JSON.parse(jsonString);
+console.log(parsed.name); // "Anna"
+console.log(typeof parsed); // "object"
+
+// Красивий вивід (для дебагу)
+console.log(JSON.stringify(user, null, 2));
+// {
+//   "name": "Anna",
+//   "age": 25,
+//   "active": true
+// }
+
+// ПОМИЛКА: невалідний JSON
+try {
+  JSON.parse("{ name: 'Anna' }"); // лапки не ті!
+} catch (error) {
+  console.log('Невалідний JSON:', error.message);
+}`,
+task:{title:"Серіалізація та десеріалізація",
+desc:'Напиши функцію <code>safeJsonParse(str)</code>, яка парсить JSON рядок. Якщо рядок невалідний — повертає <code>null</code> замість помилки.',
+input:'safeJsonParse(\'{"a":1}\')',output:'{ a: 1 }',
+input2:"safeJsonParse('not json')",output2:"null",
+hint:"Огорни <code>JSON.parse()</code> у <code>try/catch</code>. В <code>catch</code> поверни <code>null</code>.",
+solution:`function safeJsonParse(str) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return null;
+  }
+}
+
+console.log(safeJsonParse('{"a":1}'));  // { a: 1 }
+console.log(safeJsonParse('[1,2,3]'));  // [1, 2, 3]
+console.log(safeJsonParse('not json')); // null
+console.log(safeJsonParse(''));         // null`}},
+
+// ==================== 6. QUERY PARAMS ====================
+{id:6,emoji:"🔎",title:"Query Parameters",subtitle:"Фільтрація, пагінація, пошук через URL",
+explanation:'Query параметри — це дані після знаку ? в URL. Вони не змінюють ресурс, а фільтрують або уточнюють запит. /products?category=phones — \"дай мені товари, але тільки телефони\". /users?page=2&limit=10 — \"друга сторінка, по 10 штук\".',
+realWorld:"Пошук Google: google.com/search?q=javascript. Фільтри на маркетплейсі. Пагінація в списках. Сортування таблиць.",
+keyFact:"? починає параметри · & розділяє їх · key=value — формат · URLSearchParams — безпечне формування",
+diagram:null,
+code:`// Прості параметри в URL
+const url1 = '/api/users?role=admin&active=true';
+
+// Безпечне формування через URLSearchParams
+const params = new URLSearchParams({
+  page: 2,
+  limit: 10,
+  sort: 'name',
+  order: 'asc',
+});
+const url2 = \`/api/users?\${params}\`;
+// "/api/users?page=2&limit=10&sort=name&order=asc"
+
+// Реальний запит з параметрами
+const response = await fetch(
+  'https://jsonplaceholder.typicode.com/posts?userId=1'
+);
+const posts = await response.json();
+console.log(posts.length); // 10 (тільки пости userId=1)
+
+// Парсинг параметрів з URL
+const url = new URL('https://site.com/search?q=js&page=3');
+console.log(url.searchParams.get('q'));    // "js"
+console.log(url.searchParams.get('page')); // "3"`,
+task:{title:"Отримай пости конкретного користувача",
+desc:'Зроби GET запит на <code>https://jsonplaceholder.typicode.com/posts</code> з query параметром <code>userId=3</code>. Виведи кількість постів і заголовок першого.',
+input:"GET /posts?userId=3",output:'Кількість: 10, перший: "ea molestias quasi..."',
+hint:"Додай <code>?userId=3</code> до URL або використай <code>URLSearchParams</code>.",
+solution:`async function getUserPosts(userId) {
+  const params = new URLSearchParams({ userId });
+  const response = await fetch(
+    \`https://jsonplaceholder.typicode.com/posts?\${params}\`
+  );
+  const posts = await response.json();
+
+  console.log('Кількість:', posts.length);    // 10
+  console.log('Перший:', posts[0].title);
+  // "ea molestias quasi exercitationem repellat qui ipsa sit aut"
+
+  return posts;
+}
+
+getUserPosts(3);`}},
+
+// ==================== 7. ERROR HANDLING ====================
+{id:7,emoji:"⚠️",title:"Обробка помилок",subtitle:"try/catch, response.ok, мережеві помилки",
+explanation:'Помилки бувають двох типів: 1) Мережеві — сервер не відповідає, немає інтернету. fetch() кидає виключення. 2) HTTP помилки — сервер відповів, але з кодом 4xx/5xx. fetch() НЕ кидає виключення! Треба перевіряти response.ok самому.',
+realWorld:"Кожен API запит може зламатися. Сервер може бути недоступний. Токен може закінчитися. Дані можуть бути невалідні. Без обробки помилок — додаток крашиться.",
+keyFact:'fetch() кидає Error тільки при мережевих проблемах. HTTP 404/500 — НЕ виключення!',
+diagram:null,
+code:`// НЕПРАВИЛЬНО — не обробляє помилки
+const data = await fetch('/api/users').then(r => r.json());
+
+// ПРАВИЛЬНО — повна обробка
+async function fetchSafe(url) {
+  try {
+    const response = await fetch(url);
+
+    // HTTP помилка (404, 500 і т.д.)
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(
+        \`HTTP \${response.status}: \${errorBody}\`
+      );
+    }
+
+    return { data: await response.json(), error: null };
+
+  } catch (error) {
+    // Мережева помилка АБО наш throw вище
+    return { data: null, error: error.message };
+  }
+}
+
+// Використання
+const { data, error } = await fetchSafe('/api/users');
+if (error) {
+  console.error('Помилка:', error);
+} else {
+  console.log('Дані:', data);
+}`,
+task:{title:"Створи надійну функцію запиту",
+desc:'Напиши функцію <code>apiRequest(url, options)</code>, яка: 1) робить fetch з переданими options, 2) при HTTP помилці — кидає Error з кодом і текстом, 3) при мережевій помилці — кидає Error з повідомленням "Network error", 4) при успіху — повертає розпарсований JSON.',
+input:'apiRequest("/ok-url")',output:'{ ...json data }',
+input2:'apiRequest("/not-found-url")',output2:'Error: "HTTP 404: Not Found"',
+hint:"Два рівні помилок: <code>try/catch</code> для мережевих + перевірка <code>response.ok</code> для HTTP.",
+solution:`async function apiRequest(url, options = {}) {
+  let response;
+  try {
+    response = await fetch(url, options);
+  } catch (networkError) {
+    throw new Error('Network error');
+  }
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(\`HTTP \${response.status}: \${text}\`);
+  }
+
+  return response.json();
+}
+
+// Використання:
+try {
+  const data = await apiRequest(
+    'https://jsonplaceholder.typicode.com/posts/1'
+  );
+  console.log(data.title);
+} catch (error) {
+  console.error(error.message);
+  // "HTTP 404: {}" або "Network error"
+}`}},
+
+// ==================== 8. AUTH ====================
+{id:8,emoji:"🔐",title:"Автентифікація",subtitle:"API Key, Bearer Token, Basic Auth",
+explanation:'Автентифікація — це \"покажи пропуск\". Є 3 основних способи: 1) API Key — секретний ключ в заголовку або query. Як пароль від WiFi. 2) Bearer Token (JWT) — тимчасовий токен після логіну. Як квиток на концерт. 3) Basic Auth — логін:пароль закодовані в Base64. Як ID-картка.',
+realWorld:"GitHub API — Bearer Token. Google Maps — API Key. Stripe — API Key + Bearer. Старі банківські API — Basic Auth.",
+keyFact:"Ніколи не зберігай токени в коді! Використовуй змінні середовища (env) або secure storage",
+diagram:null,
+code:`// 1. API Key — в заголовку
+await fetch('https://api.example.com/data', {
+  headers: {
+    'X-API-Key': 'your-api-key-here',
+  }
+});
+
+// 2. API Key — в query параметрі
+await fetch(
+  'https://api.example.com/data?api_key=your-key-here'
+);
+
+// 3. Bearer Token (JWT) — найпоширеніший
+await fetch('https://api.example.com/profile', {
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIs...',
+  }
+});
+
+// 4. Basic Auth — логін:пароль в Base64
+const credentials = btoa('username:password');
+await fetch('https://api.example.com/data', {
+  headers: {
+    'Authorization': \`Basic \${credentials}\`,
+  }
+});
+
+// Типовий flow: логін → отримати токен → використати
+async function login(email, password) {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  const { token } = await response.json();
+  return token; // зберегти і використати далі
+}`,
+task:{title:"Реалізуй flow логіну",
+desc:'Напиши функцію <code>loginAndGetProfile(email, password)</code>, яка: 1) робить POST на <code>/api/auth/login</code> з email і password, 2) отримує token з відповіді, 3) робить GET на <code>/api/profile</code> з заголовком Authorization: Bearer {token}, 4) повертає профіль.',
+input:'loginAndGetProfile("anna@mail.com", "pass123")',output:'{ name: "Anna", email: "anna@mail.com" }',
+hint:"Два послідовних fetch. Результат першого (token) використовуєш як заголовок другого.",
+solution:`async function loginAndGetProfile(email, password) {
+  // Крок 1: Логін — отримуємо токен
+  const loginResponse = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!loginResponse.ok) {
+    throw new Error('Невірний логін або пароль');
+  }
+
+  const { token } = await loginResponse.json();
+
+  // Крок 2: Запит профілю з токеном
+  const profileResponse = await fetch('/api/profile', {
+    headers: {
+      'Authorization': \`Bearer \${token}\`,
+    },
+  });
+
+  if (!profileResponse.ok) {
+    throw new Error('Не вдалося отримати профіль');
+  }
+
+  return profileResponse.json();
+}
+
+// Використання:
+const profile = await loginAndGetProfile(
+  'anna@mail.com',
+  'pass123'
+);
+console.log(profile);`}},
+
+// ==================== 9. CRUD ====================
+{id:9,emoji:"🔄",title:"CRUD операції",subtitle:"Create · Read · Update · Delete",
+explanation:'CRUD — це 4 базових операції з даними: Create (створити) = POST, Read (прочитати) = GET, Update (оновити) = PUT/PATCH, Delete (видалити) = DELETE. Будь-який додаток — це CRUD. Блог: створити пост, прочитати пост, відредагувати пост, видалити пост.',
+realWorld:"Адмін-панель, TODO-список, CRM-система, блог, інтернет-магазин — все це CRUD над різними ресурсами.",
+keyFact:"CRUD = 4 операції × N ресурсів = весь бекенд",
+diagram:null,
+code:`const BASE = 'https://jsonplaceholder.typicode.com';
+
+// CREATE — POST
+async function createPost(title, body) {
+  const response = await fetch(\`\${BASE}/posts\`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, body, userId: 1 }),
+  });
+  return response.json(); // { id: 101, title, body, userId }
+}
+
+// READ — GET
+async function getPost(id) {
+  const response = await fetch(\`\${BASE}/posts/\${id}\`);
+  return response.json();
+}
+
+// UPDATE — PATCH (часткове оновлення)
+async function updatePostTitle(id, newTitle) {
+  const response = await fetch(\`\${BASE}/posts/\${id}\`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title: newTitle }),
+  });
+  return response.json();
+}
+
+// DELETE
+async function deletePost(id) {
+  const response = await fetch(\`\${BASE}/posts/\${id}\`, {
+    method: 'DELETE',
+  });
+  return response.ok; // true якщо видалено
+}`,
+task:{title:"Повний CRUD для TODO",
+desc:'Створи обʼєкт <code>todoApi</code> з 4 методами: <code>create(title)</code>, <code>getAll()</code>, <code>update(id, data)</code>, <code>remove(id)</code>. Базовий URL: <code>https://jsonplaceholder.typicode.com/todos</code>. Кожен метод повертає результат як JSON (або <code>response.ok</code> для delete).',
+input:"todoApi.create('Learn REST')",output:'{ id: 201, title: "Learn REST", ... }',
+hint:"4 функції, 4 HTTP методи. Для create — POST з body. Для getAll — GET. Для update — PATCH з body. Для remove — DELETE.",
+solution:`const todoApi = {
+  base: 'https://jsonplaceholder.typicode.com/todos',
+
+  async create(title) {
+    const res = await fetch(this.base, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        completed: false,
+        userId: 1,
+      }),
+    });
+    return res.json();
+  },
+
+  async getAll() {
+    const res = await fetch(this.base);
+    return res.json();
+  },
+
+  async update(id, data) {
+    const res = await fetch(\`\${this.base}/\${id}\`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  async remove(id) {
+    const res = await fetch(\`\${this.base}/\${id}\`, {
+      method: 'DELETE',
+    });
+    return res.ok;
+  },
+};
+
+// Тест:
+const newTodo = await todoApi.create('Learn REST');
+console.log(newTodo); // { id: 201, title: "Learn REST", ... }
+
+const updated = await todoApi.update(1, { completed: true });
+console.log(updated.completed); // true
+
+const deleted = await todoApi.remove(1);
+console.log(deleted); // true`}},
+
+// ==================== 10. ASYNC PATTERNS ====================
+{id:10,emoji:"⏳",title:"Async паттерни",subtitle:"Послідовні, паралельні та batch запити",
+explanation:'Часто потрібно зробити кілька запитів. Послідовно — один за одним (коли другий залежить від першого). Паралельно — всі одночасно через Promise.all (коли незалежні). Паралельно = ШВИДШЕ, бо не чекаєш кожного окремо.',
+realWorld:"Дашборд: завантажити юзера, його пости і коментарі одночасно. Пошук: запитати кілька API і обʼєднати результати.",
+keyFact:"await по одному = O(n часу) · Promise.all = O(1 найповільніший) · Promise.allSettled = не падає при помилці",
+diagram:null,
+code:`const BASE = 'https://jsonplaceholder.typicode.com';
+const json = (url) => fetch(url).then(r => r.json());
+
+// ПОСЛІДОВНО — повільно, але потрібно коли є залежність
+async function sequential() {
+  const user = await json(\`\${BASE}/users/1\`);
+  const posts = await json(\`\${BASE}/posts?userId=\${user.id}\`);
+  const comments = await json(
+    \`\${BASE}/comments?postId=\${posts[0].id}\`
+  );
+  return { user, posts, comments };
+}
+// Час: ~600ms (200 + 200 + 200)
+
+// ПАРАЛЕЛЬНО — швидко для незалежних запитів
+async function parallel() {
+  const [users, posts, todos] = await Promise.all([
+    json(\`\${BASE}/users\`),
+    json(\`\${BASE}/posts\`),
+    json(\`\${BASE}/todos\`),
+  ]);
+  return { users, posts, todos };
+}
+// Час: ~200ms (один найповільніший)
+
+// БЕЗПЕЧНО ПАРАЛЕЛЬНО — не падає при помилці
+async function safeParallel(urls) {
+  const results = await Promise.allSettled(
+    urls.map(url => json(url))
+  );
+  return results.map(r =>
+    r.status === 'fulfilled' ? r.value : null
+  );
+}`,
+task:{title:"Завантаж дані дашборду паралельно",
+desc:'Напиши функцію <code>loadDashboard(userId)</code>, яка паралельно завантажує: профіль (<code>/users/{id}</code>), пости (<code>/posts?userId={id}</code>) і todos (<code>/todos?userId={id}</code>). Поверни обʼєкт <code>{ profile, posts, todos }</code>.',
+input:"loadDashboard(1)",output:'{ profile: {name:"Leanne..."}, posts: [...10], todos: [...20] }',
+hint:"<code>Promise.all()</code> з трьома fetch запитами. Деструктуризація результату.",
+solution:`async function loadDashboard(userId) {
+  const BASE = 'https://jsonplaceholder.typicode.com';
+
+  const [profile, posts, todos] = await Promise.all([
+    fetch(\`\${BASE}/users/\${userId}\`).then(r => r.json()),
+    fetch(\`\${BASE}/posts?userId=\${userId}\`).then(r => r.json()),
+    fetch(\`\${BASE}/todos?userId=\${userId}\`).then(r => r.json()),
+  ]);
+
+  return { profile, posts, todos };
+}
+
+const dashboard = await loadDashboard(1);
+console.log(dashboard.profile.name); // "Leanne Graham"
+console.log(dashboard.posts.length); // 10
+console.log(dashboard.todos.length); // 20`}},
+
+// ==================== 11. API CLIENT ====================
+{id:11,emoji:"🏗️",title:"Створення API клієнта",subtitle:"Обʼєднуємо все в один модуль",
+explanation:'API клієнт — це клас або обʼєкт, який інкапсулює всі запити до одного API. Замість fetch() у кожному місці коду — один клієнт з методами. Це DRY (Donʼt Repeat Yourself): baseURL, заголовки, обробка помилок — в одному місці.',
+realWorld:"Кожен серйозний проект має API клієнт. В React — axios instance або обгортка fetch. В Node.js — модуль api.js.",
+keyFact:"1 API = 1 клієнт = 1 місце для baseURL, headers, error handling",
+diagram:null,
+code:`class ApiClient {
+  constructor(baseURL, defaultHeaders = {}) {
+    this.baseURL = baseURL;
+    this.defaultHeaders = {
+      'Content-Type': 'application/json',
+      ...defaultHeaders,
+    };
+  }
+
+  async request(endpoint, options = {}) {
+    const url = \`\${this.baseURL}\${endpoint}\`;
+    const config = {
+      ...options,
+      headers: {
+        ...this.defaultHeaders,
+        ...options.headers,
+      },
+    };
+
+    if (config.body && typeof config.body === 'object') {
+      config.body = JSON.stringify(config.body);
+    }
+
+    const response = await fetch(url, config);
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(\`\${response.status}: \${error}\`);
+    }
+
+    // 204 No Content — немає тіла
+    if (response.status === 204) return null;
+    return response.json();
+  }
+
+  get(endpoint)           { return this.request(endpoint); }
+  post(endpoint, body)    { return this.request(endpoint, { method: 'POST', body }); }
+  patch(endpoint, body)   { return this.request(endpoint, { method: 'PATCH', body }); }
+  delete(endpoint)        { return this.request(endpoint, { method: 'DELETE' }); }
+}
+
+// Використання
+const api = new ApiClient('https://jsonplaceholder.typicode.com');
+
+const users = await api.get('/users');
+const post  = await api.post('/posts', { title: 'New!', body: '...', userId: 1 });
+await api.delete('/posts/1');`,
+task:{title:"Розшир API клієнт авторизацією",
+desc:'Додай до класу <code>ApiClient</code>: 1) метод <code>setToken(token)</code>, який зберігає Bearer token, 2) автоматичне додавання <code>Authorization: Bearer {token}</code> до кожного запиту якщо token існує, 3) метод <code>logout()</code>, який очищує token.',
+input:"api.setToken('abc'); api.get('/profile') → заголовок Authorization є",output:'api.logout(); api.get("/public") → заголовка Authorization немає',
+hint:"Зберігай token у <code>this.token</code>. В методі <code>request()</code> додавай заголовок якщо <code>this.token</code> існує.",
+solution:`class ApiClient {
+  constructor(baseURL) {
+    this.baseURL = baseURL;
+    this.token = null;
+  }
+
+  setToken(token) {
+    this.token = token;
+  }
+
+  logout() {
+    this.token = null;
+  }
+
+  async request(endpoint, options = {}) {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Додаємо токен якщо є
+    if (this.token) {
+      headers['Authorization'] = \`Bearer \${this.token}\`;
+    }
+
+    const response = await fetch(
+      \`\${this.baseURL}\${endpoint}\`,
+      { ...options, headers }
+    );
+
+    if (!response.ok) {
+      throw new Error(\`HTTP \${response.status}\`);
+    }
+
+    if (response.status === 204) return null;
+    return response.json();
+  }
+
+  get(endpoint)        { return this.request(endpoint); }
+  post(endpoint, body) {
+    return this.request(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+  delete(endpoint) {
+    return this.request(endpoint, { method: 'DELETE' });
+  }
+}
+
+// Використання:
+const api = new ApiClient('https://api.example.com');
+api.setToken('eyJhbGciOi...');
+
+const profile = await api.get('/profile');
+// → запит з Authorization: Bearer eyJhbGciOi...
+
+api.logout();
+const data = await api.get('/public');
+// → запит БЕЗ Authorization`}}
+];
+
+// ===================== DIAGRAMS =====================
+function renderDiagram(type) {
+  if (type === 'http-flow') {
+    return `<div class="diagram http-flow">
+      <div>
+        <div class="box client">🖥 Клієнт<br><small style="font-weight:400;font-size:10px">(браузер, додаток)</small></div>
+      </div>
+      <div style="text-align:center">
+        <div class="arrow">→</div>
+        <div class="label">HTTP запит<br><small>GET /api/users</small></div>
+      </div>
+      <div>
+        <div class="box server">⚙️ Сервер<br><small style="font-weight:400;font-size:10px">(API, база даних)</small></div>
+      </div>
+      <div style="text-align:center">
+        <div class="arrow">←</div>
+        <div class="label">HTTP відповідь<br><small>200 + JSON</small></div>
+      </div>
+      <div>
+        <div class="box client">🖥 Клієнт<br><small style="font-weight:400;font-size:10px">(отримав дані)</small></div>
+      </div>
+    </div>`;
+  }
+  if (type === 'methods-table') {
+    return `<table class="method-table">
+      <thead><tr><th>Метод</th><th>Дія</th><th>Є Body?</th><th>Приклад</th></tr></thead>
+      <tbody>
+        <tr><td><span class="method-badge get">GET</span></td><td>Прочитати</td><td>Ні</td><td>GET /users</td></tr>
+        <tr><td><span class="method-badge post">POST</span></td><td>Створити</td><td>Так</td><td>POST /users</td></tr>
+        <tr><td><span class="method-badge put">PUT</span></td><td>Замінити</td><td>Так</td><td>PUT /users/1</td></tr>
+        <tr><td><span class="method-badge patch">PATCH</span></td><td>Оновити частково</td><td>Так</td><td>PATCH /users/1</td></tr>
+        <tr><td><span class="method-badge delete">DELETE</span></td><td>Видалити</td><td>Ні</td><td>DELETE /users/1</td></tr>
+      </tbody>
+    </table>`;
+  }
+  if (type === 'status-codes') {
+    const codes = [
+      {c:'200',n:'OK',s:'s2',d:'Все добре, ось дані'},
+      {c:'201',n:'Created',s:'s2',d:'Створено успішно'},
+      {c:'204',n:'No Content',s:'s2',d:'Успіх, тіла немає'},
+      {c:'301',n:'Moved',s:'s3',d:'URL змінився назавжди'},
+      {c:'400',n:'Bad Request',s:'s4',d:'Невалідні дані'},
+      {c:'401',n:'Unauthorized',s:'s4',d:'Не авторизований'},
+      {c:'403',n:'Forbidden',s:'s4',d:'Немає прав доступу'},
+      {c:'404',n:'Not Found',s:'s4',d:'Ресурс не знайдено'},
+      {c:'409',n:'Conflict',s:'s4',d:'Конфлікт (дублікат)'},
+      {c:'422',n:'Unprocessable',s:'s4',d:'Валідація не пройшла'},
+      {c:'429',n:'Too Many',s:'s4',d:'Занадто багато запитів'},
+      {c:'500',n:'Server Error',s:'s5',d:'Помилка сервера'},
+    ];
+    return `<div class="status-grid">${codes.map(c =>
+      `<div class="status-card"><div class="status-code ${c.s}">${c.c} ${c.n}</div><div class="status-name">${c.d}</div></div>`
+    ).join('')}</div>`;
+  }
+  return '';
+}
+
+// ===================== SYNTAX HIGHLIGHTING =====================
+function highlightJS(code) {
+  return code
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(\/\/.*)/g,'<span class="cmt">$1</span>')
+    .replace(/('(?:[^'\\]|\\.)*')/g,'<span class="str">$1</span>')
+    .replace(/("(?:[^"\\]|\\.)*")/g,'<span class="str">$1</span>')
+    .replace(/(`(?:[^`\\]|\\.)*`)/g,'<span class="str">$1</span>')
+    .replace(/\b(const|let|var|function|return|if|else|for|while|class|constructor|new|of|in|this|typeof|null|undefined|true|false|import|export|default|break|continue|switch|case|throw|try|catch|async|await)\b/g,'<span class="kw">$1</span>')
+    .replace(/\b(\d+)\b/g,'<span class="num">$1</span>')
+    .replace(/\bconsole\b/g,'<span class="bi">console</span>')
+    .replace(/\bJSON\b/g,'<span class="bi">JSON</span>')
+    .replace(/\bPromise\b/g,'<span class="bi">Promise</span>')
+    .replace(/\bURL\b/g,'<span class="bi">URL</span>')
+    .replace(/\bURLSearchParams\b/g,'<span class="bi">URLSearchParams</span>');
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ===================== RENDER =====================
+function renderNav() {
+  document.getElementById('nav').innerHTML = TOPICS.map(t => {
+    const short = t.title.split(' — ')[0].split(' ').slice(0,3).join(' ');
+    return `<button class="nav-btn" onclick="scrollToTopic(${t.id})" id="nav-${t.id}">${t.emoji} ${short}</button>`;
+  }).join('');
+}
+
+function renderTopics() {
+  document.getElementById('topics').innerHTML = TOPICS.map(t => {
+    const taskHtml = renderTask(t.task);
+    return `
+    <div class="topic" id="topic-${t.id}">
+      <button class="topic-header" onclick="toggleTopic(${t.id})">
+        <span class="topic-emoji">${t.emoji}</span>
+        <div class="topic-info">
+          <div class="topic-title">${t.title}</div>
+          <div class="topic-sub">${t.subtitle}</div>
+        </div>
+        <span class="topic-chevron">▾</span>
+      </button>
+      <div class="topic-body">
+        <div class="explain-box">
+          <div class="explain-label">Пояснення</div>
+          <div class="explain-text">${t.explanation}</div>
+        </div>
+        <div class="meta-real"><b>Де в реальності:</b> ${t.realWorld}</div>
+        ${t.keyFact ? `<div class="keyfact">💡 ${t.keyFact}</div>` : ''}
+        ${t.diagram ? renderDiagram(t.diagram) : ''}
+        <div class="code-label">Код</div>
+        <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(t.code)}</code></pre>
+        ${taskHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTask(task) {
+  let io = `<div class="task-io">
+    <div><span class="lbl in">Вхід: </span>${escHtml(task.input)}</div>
+    <div><span class="lbl out">Вихід: </span>${escHtml(task.output)}</div></div>`;
+  if (task.input2) {
+    io += `<div class="task-io">
+      <div><span class="lbl in2">Вхід 2: </span>${escHtml(task.input2)}</div>
+      <div><span class="lbl out2">Вихід 2: </span>${escHtml(task.output2)}</div></div>`;
+  }
+  return `<div class="task">
+    <div class="task-head"><span>✏️</span><span class="task-title">${task.title}</span></div>
+    <div class="task-desc">${task.desc}</div>
+    ${io}
+    <div class="hint-box"><b>Підказка:</b> ${task.hint}</div>
+    <button class="solution-toggle" onclick="toggleSolution(this)">Показати рішення ▼</button>
+    <div class="solution-code">
+      <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(task.solution)}</code></pre>
+    </div>
+  </div>`;
+}
+
+// ===================== INTERACTIONS =====================
+let openTopicId = null;
+
+function toggleTopic(id) {
+  const prev = openTopicId;
+  if (prev !== null) {
+    document.getElementById(`topic-${prev}`).classList.remove('open');
+    document.getElementById(`nav-${prev}`)?.classList.remove('active');
+  }
+  if (prev === id) { openTopicId = null; return; }
+  openTopicId = id;
+  const el = document.getElementById(`topic-${id}`);
+  el.classList.add('open');
+  document.getElementById(`nav-${id}`)?.classList.add('active');
+  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+}
+
+function scrollToTopic(id) { toggleTopic(id); }
+
+function toggleSolution(btn) {
+  const code = btn.nextElementSibling;
+  const isOpen = code.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.textContent = isOpen ? 'Сховати рішення ▲' : 'Показати рішення ▼';
+}
+
+function copyCode(btn) {
+  const text = btn.parentElement.querySelector('code').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => { renderNav(); renderTopics(); });
+</script>
+</body>
+</html>
