@@ -8,20 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0e17;--surface:#121824;--surface2:#181f32;--border:#252d40;
-  --border-active:#4a8eff;--text:#dfe6f0;--text-muted:#6b7a94;
-  --accent:#4a8eff;--green:#34d058;--yellow:#e3a832;--red:#f0564a;
-  --purple:#a78bfa;--orange:#f0883e;--code-bg:#0c1018;
-  --font-body:'Manrope',system-ui,sans-serif;
-  --font-mono:'JetBrains Mono','Fira Code',monospace;
-}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-
+:root{--primary:#f0883e;--primary-rgb:240,136,62}
 .hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(240,136,62,.1) 0%,transparent 70%);pointer-events:none}
 .hero-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--orange);margin-bottom:12px;text-transform:uppercase}
@@ -30,38 +19,7 @@ a{color:var(--accent);text-decoration:none}
 .hero-sub{color:var(--text-muted);font-size:15px;max-width:520px;margin:0 auto}
 .hero-tags{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap}
 .hero-tag{background:rgba(240,136,62,.08);border:1px solid rgba(240,136,62,.18);border-radius:99px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--orange)}
-
-.container{max-width:780px;margin:0 auto;padding:0 16px 60px}
-
-.nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:32px;padding:16px;background:var(--surface);border-radius:14px;border:1px solid var(--border)}
-.nav-btn{background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);cursor:pointer;transition:all .2s;white-space:nowrap}
-.nav-btn:hover{color:var(--text);background:var(--surface2);border-color:var(--border)}
-.nav-btn.active{color:var(--orange);background:rgba(240,136,62,.1);border-color:rgba(240,136,62,.25)}
-
-.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase}
-
-.topic{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .25s}
-.topic.open{border-color:rgba(240,136,62,.4)}
-.topic-header{width:100%;display:flex;align-items:center;gap:14px;padding:16px 20px;background:none;border:none;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font-body)}
-.topic-emoji{font-size:26px;flex-shrink:0;width:36px;text-align:center}
-.topic-info{flex:1;min-width:0}
-.topic-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.topic-sub{font-size:13px;color:var(--text-muted);margin-top:2px}
-.topic-chevron{color:var(--text-muted);font-size:18px;transition:transform .25s;flex-shrink:0}
-.topic.open .topic-chevron{transform:rotate(180deg)}
-.topic-body{padding:0 20px 22px;display:none}
-.topic.open .topic-body{display:block;animation:fadeIn .3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-
-.explain-box{background:var(--bg);border-radius:10px;padding:16px 18px;margin-bottom:14px;border-left:3px solid var(--orange)}
-.explain-label{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
-.explain-text{font-size:14px;line-height:1.7;color:var(--text)}
-
-.meta-real{font-size:13px;color:var(--text-muted);margin-bottom:14px}
-.meta-real b{color:var(--purple);font-weight:600}
 .keyfact{display:inline-block;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:5px 14px;font-size:12px;font-family:var(--font-mono);color:var(--purple);font-weight:600;margin-bottom:14px}
-
-/* ===== DIAGRAMS ===== */
 .diagram{margin:16px 0 18px}
 .http-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--font-mono);font-size:13px}
 .http-flow .box{padding:10px 16px;border-radius:8px;font-weight:600;text-align:center}
@@ -69,7 +27,6 @@ a{color:var(--accent);text-decoration:none}
 .http-flow .arrow{color:var(--text-muted);font-size:18px}
 .http-flow .server{background:rgba(52,208,88,.1);border:1px solid rgba(52,208,88,.3);color:var(--green)}
 .http-flow .label{font-size:10px;color:var(--text-muted);margin-top:2px}
-
 .method-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
 .method-table th{text-align:left;padding:8px 12px;background:var(--bg);color:var(--text-muted);font-weight:600;font-size:11px;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border)}
 .method-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
@@ -80,73 +37,12 @@ a{color:var(--accent);text-decoration:none}
 .method-badge.put{background:rgba(240,136,62,.12);color:var(--orange);border:1px solid rgba(240,136,62,.2)}
 .method-badge.patch{background:rgba(227,168,50,.12);color:var(--yellow);border:1px solid rgba(227,168,50,.2)}
 .method-badge.delete{background:rgba(240,86,74,.12);color:var(--red);border:1px solid rgba(240,86,74,.2)}
-
 .status-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:12px 0}
 .status-card{background:var(--bg);border-radius:8px;padding:10px 14px;border:1px solid var(--border)}
 .status-code{font-family:var(--font-mono);font-weight:700;font-size:15px;margin-bottom:2px}
 .status-code.s2{color:var(--green)}.status-code.s3{color:var(--yellow)}.status-code.s4{color:var(--orange)}.status-code.s5{color:var(--red)}
 .status-name{font-size:12px;color:var(--text-muted)}
-
-.code-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
-pre.code{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.7;color:#c9d1d9;font-family:var(--font-mono);margin:0 0 16px;tab-size:2;position:relative}
-pre.code .kw{color:#ff7b72}pre.code .fn{color:#d2a8ff}pre.code .str{color:#a5d6ff}pre.code .num{color:#79c0ff}pre.code .cmt{color:#484f58;font-style:italic}pre.code .cls{color:#ffa657}pre.code .bi{color:#79c0ff}
-.copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--text-muted);cursor:pointer;font-family:var(--font-mono);transition:all .2s;opacity:0}
-pre.code:hover .copy-btn{opacity:1}
-.copy-btn:hover{color:var(--text);border-color:var(--orange)}
-.copy-btn.copied{color:var(--green);border-color:var(--green)}
-
-.task{background:rgba(227,168,50,.06);border:1px solid rgba(227,168,50,.18);border-radius:12px;padding:18px;margin-top:16px}
-.task-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.task-title{font-weight:700;color:var(--yellow);font-size:15px}
-.task-desc{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:10px}
-.task-io{font-family:var(--font-mono);font-size:12.5px;color:var(--text-muted);margin:8px 0}
-.task-io .lbl{font-weight:600}
-.task-io .lbl.in{color:var(--green)}.task-io .lbl.out{color:var(--green)}
-.task-io .lbl.in2{color:var(--red)}.task-io .lbl.out2{color:var(--red)}
-.hint-box{background:rgba(74,142,255,.06);border:1px solid rgba(74,142,255,.12);border-radius:8px;padding:8px 14px;margin:12px 0;font-size:13px;color:var(--accent)}
-.hint-box b{font-weight:600}
-.solution-toggle{background:transparent;border:1px solid rgba(227,168,50,.3);border-radius:8px;padding:7px 18px;color:var(--yellow);cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font-body);transition:all .2s}
-.solution-toggle:hover{background:rgba(227,168,50,.1)}
-.solution-toggle.open{background:rgba(227,168,50,.1)}
-.solution-code{display:none;margin-top:12px}
-.solution-code.open{display:block;animation:fadeIn .3s ease}
-
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
-.topbar-inner{max-width:780px;margin:0 auto;height:48px;display:flex;align-items:center;gap:16px}
-.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;font-weight:600;text-decoration:none;transition:color .2s}
-.back-link:hover{color:var(--orange)}
-.back-link svg{width:14px;height:14px;flex-shrink:0}
-.topbar-sep{color:var(--border);font-size:16px}
-.topbar-cur{font-size:13px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-.footer{text-align:center;padding:24px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:40px}
-.footer a{color:var(--orange)}
-
-@media(max-width:600px){
-  .hero{padding:40px 16px 28px}
-  .topic-header{padding:14px 16px;gap:10px}
-  .topic-body{padding:0 16px 18px}
-  .nav{padding:12px;gap:4px}
-  .nav-btn{font-size:10px;padding:5px 8px}
-  .status-grid{grid-template-columns:1fr}
-  .http-flow{justify-content:center}
-}
-
-/* ===== QUIZ ===== */
-.quiz{background:rgba(240,136,62,.04);border:1px solid rgba(240,136,62,.15);border-radius:12px;padding:18px;margin-top:12px}
-.quiz-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--orange);text-transform:uppercase;margin-bottom:10px}
-.quiz-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
-.quiz-opts{display:flex;flex-direction:column;gap:7px}
-.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:var(--font-body);transition:all .2s;display:flex;align-items:center;gap:10px;width:100%}
-.quiz-opt:hover:not(:disabled){border-color:var(--orange);color:var(--orange);background:rgba(240,136,62,.06)}
-.quiz-opt:disabled{cursor:default}
-.quiz-opt.correct{background:rgba(52,208,88,.08);border-color:rgba(52,208,88,.4);color:var(--green)}
-.quiz-opt.wrong{background:rgba(240,86,74,.08);border-color:rgba(240,86,74,.4);color:var(--red)}
-.opt-letter{font-family:var(--font-mono);font-weight:700;font-size:11px;min-width:20px;height:20px;border-radius:4px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
-.quiz-result{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:8px;display:none}
-.quiz-result.show{display:block}
-.quiz-result.ok{background:rgba(52,208,88,.08);color:var(--green);border:1px solid rgba(52,208,88,.2)}
-.quiz-result.fail{background:rgba(240,86,74,.08);color:var(--red);border:1px solid rgba(240,86,74,.2)}
+@media(max-width:600px){.status-grid{grid-template-columns:1fr}.http-flow{justify-content:center}}
 </style>
 </head>
 <body>
@@ -168,23 +64,40 @@ pre.code:hover .copy-btn{opacity:1}
   <p class="hero-sub">Що таке API, HTTP методи, статус-коди, заголовки, авторизація — з прикладами на fetch() і задачами.</p>
   <div class="hero-tags">
     <span class="hero-tag">12 тем</span>
-    <span class="hero-tag">fetch() / Node.js</span>
-    <span class="hero-tag">HTTP коди</span>
-    <span class="hero-tag">Задачі + рішення</span>
+    <span class="hero-tag">⏱ ~3 год</span>
+    <span class="hero-tag">Початківець</span>
+    <span class="hero-tag">Задачі + тести</span>
   </div>
+</div>
+
+<div class="progress-wrap">
+  <span class="progress-label">Тести:</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-score" id="progress-score">0 / 12</span>
 </div>
 
 <div class="container">
 <nav class="nav" id="nav"></nav>
 <div class="section-label">ТЕМИ КУРСУ</div>
 <div id="topics"></div>
+<a href="algorithms.html" class="next-course">
+  <div>
+    <div class="next-course-label">Наступний курс</div>
+    <div class="next-course-title">⚡ JS Algorithms &amp; Data Structures</div>
+  </div>
+  <span class="next-course-arrow">→</span>
+</a>
 <div class="footer">
   Порада: відкрий DevTools → Network щоб бачити запити в реальному часі<br>
   <a href="https://jsonplaceholder.typicode.com" target="_blank">jsonplaceholder.typicode.com</a> — безкоштовний API для практики
 </div>
 </div>
 
+<script src="shared.js"></script>
 <script>
+Storage.key = 'jsc-rest';
+totalTopics = 12;
+
 const TOPICS = [
 
 // ==================== 0. WHAT IS API ====================
@@ -1041,87 +954,11 @@ function renderDiagram(type) {
   return '';
 }
 
-// ===================== SYNTAX HIGHLIGHTING =====================
-function highlightJS(code) {
-  const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-  const KW = /^(const|let|var|function|return|if|else|for|while|class|constructor|new|of|in|this|typeof|null|undefined|true|false|import|export|default|break|continue|switch|case|throw|try|catch|async|await)$/;
-  const BI = /^(console|JSON|Promise|URL|URLSearchParams)$/;
-
-  function highlightTokens(chunk) {
-    return chunk
-      .replace(/\b([A-Za-z_$][A-Za-z0-9_$]*)\b/g, m =>
-        KW.test(m) ? `<span class="kw">${m}</span>` :
-        BI.test(m) ? `<span class="bi">${m}</span>` : m)
-      .replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
-  }
-
-  let result = '';
-  let i = 0;
-  const s = escaped;
-
-  while (i < s.length) {
-    if (s[i] === '/' && s[i+1] === '/') {
-      const end = s.indexOf('\n', i);
-      const slice = end === -1 ? s.slice(i) : s.slice(i, end);
-      result += `<span class="cmt">${slice}</span>`;
-      i += slice.length;
-    } else if (s[i] === '"' || s[i] === "'" || s[i] === '`') {
-      const q = s[i];
-      let j = i + 1;
-      while (j < s.length && s[j] !== q) { if (s[j] === '\\') j++; j++; }
-      result += `<span class="str">${s.slice(i, j + 1)}</span>`;
-      i = j + 1;
-    } else {
-      let j = i;
-      while (j < s.length) {
-        if ((s[j] === '/' && s[j+1] === '/') || s[j] === '"' || s[j] === "'" || s[j] === '`') break;
-        j++;
-      }
-      if (j === i) j = i + 1;
-      result += highlightTokens(s.slice(i, j));
-      i = j;
-    }
-  }
-  return result;
-}
-
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-
-// ===================== QUIZ =====================
-function renderQuiz(quiz, id) {
-  const letters = ['A','B','C','D'];
-  const opts = quiz.options.map((opt, i) =>
-    `<button class="quiz-opt" onclick="answerQuiz(this,${i},${quiz.correct},${id})"><span class="opt-letter">${letters[i]}</span>${escHtml(opt)}</button>`
-  ).join('');
-  return `<div class="quiz" id="quiz-${id}">
-    <div class="quiz-label">🧪 Тест</div>
-    <div class="quiz-q">${escHtml(quiz.q)}</div>
-    <div class="quiz-opts">${opts}</div>
-    <div class="quiz-result" id="qr-${id}"></div>
-  </div>`;
-}
-
-function answerQuiz(btn, chosen, correct, id) {
-  const quiz = document.getElementById(`quiz-${id}`);
-  const result = document.getElementById(`qr-${id}`);
-  quiz.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
-  quiz.querySelectorAll('.quiz-opt')[correct].classList.add('correct');
-  if (chosen === correct) {
-    result.textContent = '✓ Правильно!';
-    result.className = 'quiz-result show ok';
-  } else {
-    btn.classList.add('wrong');
-    result.textContent = '✗ Неправильно. Правильна відповідь виділена зеленим.';
-    result.className = 'quiz-result show fail';
-  }
-}
-
 // ===================== RENDER =====================
 function renderNav() {
   document.getElementById('nav').innerHTML = TOPICS.map(t => {
     const short = t.title.split(' — ')[0].split(' ').slice(0,3).join(' ');
-    return `<button class="nav-btn" onclick="scrollToTopic(${t.id})" id="nav-${t.id}">${t.emoji} ${short}</button>`;
+    return `<button class="nav-btn" onclick="scrollToTopic(${t.id})" id="nav-${t.id}">${t.emoji} ${short}<span class="nav-check">✓</span></button>`;
   }).join('');
 }
 
@@ -1131,7 +968,7 @@ function renderTopics() {
     const quizHtml = renderQuiz(QUIZZES[t.id], t.id);
     return `
     <div class="topic" id="topic-${t.id}">
-      <button class="topic-header" onclick="toggleTopic(${t.id})">
+      <button class="topic-header" aria-expanded="false" aria-controls="body-${t.id}" onclick="toggleTopic(${t.id})">
         <span class="topic-emoji">${t.emoji}</span>
         <div class="topic-info">
           <div class="topic-title">${t.title}</div>
@@ -1139,7 +976,7 @@ function renderTopics() {
         </div>
         <span class="topic-chevron">▾</span>
       </button>
-      <div class="topic-body">
+      <div class="topic-body" id="body-${t.id}">
         <div class="explain-box">
           <div class="explain-label">Пояснення</div>
           <div class="explain-text">${t.explanation}</div>
@@ -1148,7 +985,8 @@ function renderTopics() {
         ${t.keyFact ? `<div class="keyfact">💡 ${t.keyFact}</div>` : ''}
         ${t.diagram ? renderDiagram(t.diagram) : ''}
         <div class="code-label">Код</div>
-        <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(t.code)}</code></pre>
+        <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><button class="run-btn-pre" onclick="handleRunCode(this)">▶ run</button><code>${highlightJS(t.code)}</code></pre>
+        <div class="code-output"></div>
         ${taskHtml}
         ${quizHtml}
       </div>
@@ -1156,62 +994,7 @@ function renderTopics() {
   }).join('');
 }
 
-function renderTask(task) {
-  let io = `<div class="task-io">
-    <div><span class="lbl in">Вхід: </span>${escHtml(task.input)}</div>
-    <div><span class="lbl out">Вихід: </span>${escHtml(task.output)}</div></div>`;
-  if (task.input2) {
-    io += `<div class="task-io">
-      <div><span class="lbl in2">Вхід 2: </span>${escHtml(task.input2)}</div>
-      <div><span class="lbl out2">Вихід 2: </span>${escHtml(task.output2)}</div></div>`;
-  }
-  return `<div class="task">
-    <div class="task-head"><span>✏️</span><span class="task-title">${task.title}</span></div>
-    <div class="task-desc">${task.desc}</div>
-    ${io}
-    <div class="hint-box"><b>Підказка:</b> ${task.hint}</div>
-    <button class="solution-toggle" onclick="toggleSolution(this)">Показати рішення ▼</button>
-    <div class="solution-code">
-      <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(task.solution)}</code></pre>
-    </div>
-  </div>`;
-}
-
-// ===================== INTERACTIONS =====================
-let openTopicId = null;
-
-function toggleTopic(id) {
-  const prev = openTopicId;
-  if (prev !== null) {
-    document.getElementById(`topic-${prev}`).classList.remove('open');
-    document.getElementById(`nav-${prev}`)?.classList.remove('active');
-  }
-  if (prev === id) { openTopicId = null; return; }
-  openTopicId = id;
-  const el = document.getElementById(`topic-${id}`);
-  el.classList.add('open');
-  document.getElementById(`nav-${id}`)?.classList.add('active');
-  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
-}
-
-function scrollToTopic(id) { toggleTopic(id); }
-
-function toggleSolution(btn) {
-  const code = btn.nextElementSibling;
-  const isOpen = code.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-  btn.textContent = isOpen ? 'Сховати рішення ▲' : 'Показати рішення ▼';
-}
-
-function copyCode(btn) {
-  const text = btn.parentElement.querySelector('code').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => { renderNav(); renderTopics(); });
+document.addEventListener('DOMContentLoaded', () => { renderNav(); renderTopics(); updateProgress(); });
 </script>
 </body>
 </html>
