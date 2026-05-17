@@ -895,24 +895,47 @@ console.log(climbStairs(10)); // 89`}}
 
 // ===================== SYNTAX HIGHLIGHTING =====================
 function highlightJS(code) {
-  let html = code
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    // comments
-    .replace(/(\/\/.*)/g,'<span class="cmt">$1</span>')
-    // strings
-    .replace(/('(?:[^'\\]|\\.)*')/g,'<span class="str">$1</span>')
-    .replace(/("(?:[^"\\]|\\.)*")/g,'<span class="str">$1</span>')
-    .replace(/(`(?:[^`\\]|\\.)*`)/g,'<span class="str">$1</span>')
-    // keywords
-    .replace(/\b(const|let|var|function|return|if|else|for|while|class|constructor|new|of|in|this|typeof|null|undefined|true|false|import|export|default|break|continue|switch|case|throw|try|catch)\b/g,'<span class="kw">$1</span>')
-    // class names after new/class
-    .replace(/\b(new|class)\b <span class="kw">(\w+)<\/span>/g,'<span class="kw">$1</span> <span class="cls">$2</span>')
-    // numbers
-    .replace(/\b(\d+)\b/g,'<span class="num">$1</span>')
-    // console.log
-    .replace(/\bconsole\b/g,'<span class="bi">console</span>')
-    .replace(/\bMath\b/g,'<span class="bi">Math</span>');
-  return html;
+  const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const KW = /^(const|let|var|function|return|if|else|for|while|class|constructor|new|of|in|this|typeof|null|undefined|true|false|import|export|default|break|continue|switch|case|throw|try|catch)$/;
+  const BI = /^(console|Math)$/;
+
+  function highlightTokens(chunk) {
+    return chunk
+      .replace(/\b([A-Za-z_$][A-Za-z0-9_$]*)\b/g, m =>
+        KW.test(m) ? `<span class="kw">${m}</span>` :
+        BI.test(m) ? `<span class="bi">${m}</span>` : m)
+      .replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+  }
+
+  let result = '';
+  let i = 0;
+  const s = escaped;
+
+  while (i < s.length) {
+    if (s[i] === '/' && s[i+1] === '/') {
+      const end = s.indexOf('\n', i);
+      const slice = end === -1 ? s.slice(i) : s.slice(i, end);
+      result += `<span class="cmt">${slice}</span>`;
+      i += slice.length;
+    } else if (s[i] === '"' || s[i] === "'" || s[i] === '`') {
+      const q = s[i];
+      let j = i + 1;
+      while (j < s.length && s[j] !== q) { if (s[j] === '\\') j++; j++; }
+      result += `<span class="str">${s.slice(i, j + 1)}</span>`;
+      i = j + 1;
+    } else {
+      let j = i;
+      while (j < s.length) {
+        if ((s[j] === '/' && s[j+1] === '/') || s[j] === '"' || s[j] === "'" || s[j] === '`') break;
+        j++;
+      }
+      if (j === i) j = i + 1;
+      result += highlightTokens(s.slice(i, j));
+      i = j;
+    }
+  }
+  return result;
 }
 
 // ===================== DIAGRAMS =====================
