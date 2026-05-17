@@ -111,6 +111,14 @@ pre.code:hover .copy-btn{opacity:1}
 .solution-code{display:none;margin-top:12px}
 .solution-code.open{display:block;animation:fadeIn .3s ease}
 
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+.topbar-inner{max-width:780px;margin:0 auto;height:48px;display:flex;align-items:center;gap:16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;font-weight:600;text-decoration:none;transition:color .2s}
+.back-link:hover{color:var(--orange)}
+.back-link svg{width:14px;height:14px;flex-shrink:0}
+.topbar-sep{color:var(--border);font-size:16px}
+.topbar-cur{font-size:13px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .footer{text-align:center;padding:24px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:40px}
 .footer a{color:var(--orange)}
 
@@ -123,9 +131,36 @@ pre.code:hover .copy-btn{opacity:1}
   .status-grid{grid-template-columns:1fr}
   .http-flow{justify-content:center}
 }
+
+/* ===== QUIZ ===== */
+.quiz{background:rgba(240,136,62,.04);border:1px solid rgba(240,136,62,.15);border-radius:12px;padding:18px;margin-top:12px}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--orange);text-transform:uppercase;margin-bottom:10px}
+.quiz-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:var(--font-body);transition:all .2s;display:flex;align-items:center;gap:10px;width:100%}
+.quiz-opt:hover:not(:disabled){border-color:var(--orange);color:var(--orange);background:rgba(240,136,62,.06)}
+.quiz-opt:disabled{cursor:default}
+.quiz-opt.correct{background:rgba(52,208,88,.08);border-color:rgba(52,208,88,.4);color:var(--green)}
+.quiz-opt.wrong{background:rgba(240,86,74,.08);border-color:rgba(240,86,74,.4);color:var(--red)}
+.opt-letter{font-family:var(--font-mono);font-weight:700;font-size:11px;min-width:20px;height:20px;border-radius:4px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.quiz-result{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:8px;display:none}
+.quiz-result.show{display:block}
+.quiz-result.ok{background:rgba(52,208,88,.08);color:var(--green);border:1px solid rgba(52,208,88,.2)}
+.quiz-result.fail{background:rgba(240,86,74,.08);color:var(--red);border:1px solid rgba(240,86,74,.2)}
 </style>
 </head>
 <body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 7H3M6 3L2 7l4 4"/></svg>
+      Всі курси
+    </a>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-cur">REST API для JavaScript розробника</span>
+  </div>
+</header>
 
 <div class="hero">
   <div class="hero-label">Курс для новачків</div>
@@ -933,6 +968,22 @@ const data = await api.get('/public');
 // → запит БЕЗ Authorization`}}
 ];
 
+// ===================== QUIZZES =====================
+const QUIZZES = [
+  {q:"Що означає скорочення API?",options:["Application Programming Interface","Advanced Protocol Integration","Application Process Input","Automated Programming Instance"],correct:0},
+  {q:"Як правильно назвати endpoint для отримання всіх користувачів?",options:["GET /users","GET /getUsers","POST /getAllUsers","GET /user/all"],correct:0},
+  {q:"Який HTTP метод використовується для часткового оновлення ресурсу?",options:["PATCH","PUT","POST","UPDATE"],correct:0},
+  {q:"Що означає статус-код 401?",options:["Користувач не авторизований","Ресурс не знайдено","Помилка на сервері","Запит успішно виконано"],correct:0},
+  {q:"Який заголовок вказує формат тіла запиту, що відправляється?",options:["Content-Type","Accept","Authorization","X-Request-Id"],correct:0},
+  {q:"Яка функція перетворює JS-об'єкт на JSON-рядок?",options:["JSON.stringify()","JSON.parse()","JSON.encode()","JSON.convert()"],correct:0},
+  {q:"Як безпечно сформувати query-параметри в URL?",options:["new URLSearchParams({ key: value })","Конкатенацією рядків вручну","JSON.stringify({ key: value })","encodeURIComponent() для цілого URL"],correct:0},
+  {q:"Коли fetch() кидає виключення (throw)?",options:["Тільки при мережевій помилці (сервер недоступний)","При будь-якому статус-коді ≥ 400","При статусах 4xx і 5xx","fetch() ніколи не кидає виключень"],correct:0},
+  {q:"Як передається Bearer Token у запиті?",options:["В заголовку Authorization: Bearer {token}","В тілі запиту як поле token","В query параметрі ?token=...","В заголовку X-Token: {token}"],correct:0},
+  {q:"Яка HTTP операція відповідає Create в CRUD?",options:["POST","GET","PUT","PATCH"],correct:0},
+  {q:"Яка перевага Promise.all() над послідовними await?",options:["Запити виконуються паралельно — швидше","Кожен запит обробляє помилки окремо","Promise.all() ніколи не кидає виключень","Послідовні await завжди швидші"],correct:0},
+  {q:"Яка головна перевага використання класу ApiClient?",options:["Один baseURL та обробка помилок для всіх запитів","Прискорює мережеві запити","Кешує відповіді автоматично","Повністю замінює fetch()"],correct:0},
+];
+
 // ===================== DIAGRAMS =====================
 function renderDiagram(type) {
   if (type === 'http-flow') {
@@ -1037,6 +1088,35 @@ function highlightJS(code) {
 
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
+// ===================== QUIZ =====================
+function renderQuiz(quiz, id) {
+  const letters = ['A','B','C','D'];
+  const opts = quiz.options.map((opt, i) =>
+    `<button class="quiz-opt" onclick="answerQuiz(this,${i},${quiz.correct},${id})"><span class="opt-letter">${letters[i]}</span>${escHtml(opt)}</button>`
+  ).join('');
+  return `<div class="quiz" id="quiz-${id}">
+    <div class="quiz-label">🧪 Тест</div>
+    <div class="quiz-q">${escHtml(quiz.q)}</div>
+    <div class="quiz-opts">${opts}</div>
+    <div class="quiz-result" id="qr-${id}"></div>
+  </div>`;
+}
+
+function answerQuiz(btn, chosen, correct, id) {
+  const quiz = document.getElementById(`quiz-${id}`);
+  const result = document.getElementById(`qr-${id}`);
+  quiz.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+  quiz.querySelectorAll('.quiz-opt')[correct].classList.add('correct');
+  if (chosen === correct) {
+    result.textContent = '✓ Правильно!';
+    result.className = 'quiz-result show ok';
+  } else {
+    btn.classList.add('wrong');
+    result.textContent = '✗ Неправильно. Правильна відповідь виділена зеленим.';
+    result.className = 'quiz-result show fail';
+  }
+}
+
 // ===================== RENDER =====================
 function renderNav() {
   document.getElementById('nav').innerHTML = TOPICS.map(t => {
@@ -1048,6 +1128,7 @@ function renderNav() {
 function renderTopics() {
   document.getElementById('topics').innerHTML = TOPICS.map(t => {
     const taskHtml = renderTask(t.task);
+    const quizHtml = renderQuiz(QUIZZES[t.id], t.id);
     return `
     <div class="topic" id="topic-${t.id}">
       <button class="topic-header" onclick="toggleTopic(${t.id})">
@@ -1069,6 +1150,7 @@ function renderTopics() {
         <div class="code-label">Код</div>
         <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(t.code)}</code></pre>
         ${taskHtml}
+        ${quizHtml}
       </div>
     </div>`;
   }).join('');

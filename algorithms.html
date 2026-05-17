@@ -173,6 +173,22 @@ pre.code:hover .copy-btn{opacity:1}
   .nav-btn{font-size:10px;padding:5px 8px}
   .tree-row{gap:20px}
 }
+
+/* ===== QUIZ ===== */
+.quiz{background:rgba(74,142,255,.04);border:1px solid rgba(74,142,255,.15);border-radius:12px;padding:18px;margin-top:12px}
+.quiz-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:10px}
+.quiz-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:var(--font-body);transition:all .2s;display:flex;align-items:center;gap:10px;width:100%}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:rgba(74,142,255,.06)}
+.quiz-opt:disabled{cursor:default}
+.quiz-opt.correct{background:rgba(52,208,88,.08);border-color:rgba(52,208,88,.4);color:var(--green)}
+.quiz-opt.wrong{background:rgba(240,86,74,.08);border-color:rgba(240,86,74,.4);color:var(--red)}
+.opt-letter{font-family:var(--font-mono);font-weight:700;font-size:11px;min-width:20px;height:20px;border-radius:4px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.quiz-result{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:8px;display:none}
+.quiz-result.show{display:block}
+.quiz-result.ok{background:rgba(52,208,88,.08);color:var(--green);border:1px solid rgba(52,208,88,.2)}
+.quiz-result.fail{background:rgba(240,86,74,.08);color:var(--red);border:1px solid rgba(240,86,74,.2)}
 </style>
 </head>
 <body>
@@ -913,6 +929,24 @@ console.log(climbStairs(4));  // 5
 console.log(climbStairs(10)); // 89`}}
 ];
 
+// ===================== QUIZZES =====================
+const QUIZZES = [
+  {q:"Що таке алгоритм?",options:["Покрокова інструкція для розв'язання задачі","Структура для зберігання даних","Мова програмування","Тип даних у JavaScript"],correct:0},
+  {q:"Яка складність операції push() у масиві?",options:["O(1)","O(n)","O(log n)","O(n²)"],correct:0},
+  {q:"Що поверне 'hello'[1]?",options:["'e'","'h'","'l'","undefined"],correct:0},
+  {q:"Яка структура в JS гарантує унікальність елементів?",options:["Set","Map","Array","Object"],correct:0},
+  {q:"Який принцип роботи стеку?",options:["LIFO — останній зайшов, перший вийшов","FIFO — перший зайшов, перший вийшов","Випадковий доступ за ключем","Доступ за індексом"],correct:0},
+  {q:"Метод dequeue() видаляє елемент...",options:["З початку черги","З кінця черги","З середини черги","Випадковий елемент"],correct:0},
+  {q:"Що станеться, якщо рекурсивна функція не має базового випадку?",options:["Stack overflow — нескінченний цикл викликів","Функція поверне undefined","Функція викличеться рівно один раз","Виникне синтаксична помилка"],correct:0},
+  {q:"Яка умова необхідна для бінарного пошуку?",options:["Масив має бути відсортований","Масив має мати парну кількість елементів","Масив має містити тільки числа","Елементи мають бути унікальними"],correct:0},
+  {q:"Яка складність вбудованого Array.sort() у JavaScript?",options:["O(n log n)","O(n²)","O(n)","O(log n)"],correct:0},
+  {q:"Яка складність вставки вузла на початок Linked List?",options:["O(1)","O(n)","O(log n)","O(n²)"],correct:0},
+  {q:"Чому пошук у Hash Table є O(1) в середньому?",options:["Ключ перетворюється на індекс через хеш-функцію","Дані зберігаються у відсортованому порядку","Всередині використовується бінарний пошук","Кожен елемент знає позицію сусідів"],correct:0},
+  {q:"Скільки батьків може мати вузол у дереві?",options:["Рівно одного (або нуль для кореня)","Будь-яку кількість","Максимум два","Мінімум один"],correct:0},
+  {q:"Чим BFS відрізняється від DFS?",options:["BFS обходить рівень за рівнем, DFS — вглиб","BFS використовує стек, DFS — чергу","BFS завжди швидший за DFS","BFS працює тільки з деревами"],correct:0},
+  {q:"Яка головна техніка Dynamic Programming?",options:["Збереження вже порахованих результатів (memoization)","Розбиття задачі на незалежні частини","Рекурсія без базового випадку","Сортування даних перед обчисленням"],correct:0},
+];
+
 // ===================== SYNTAX HIGHLIGHTING =====================
 function highlightJS(code) {
   const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1015,6 +1049,7 @@ function renderTopics() {
   const container = document.getElementById('topics');
   container.innerHTML = TOPICS.map(t => {
     const taskHtml = renderTask(t.task);
+    const quizHtml = renderQuiz(QUIZZES[t.id], t.id);
     return `
     <div class="topic" id="topic-${t.id}">
       <button class="topic-header" onclick="toggleTopic(${t.id})">
@@ -1039,6 +1074,7 @@ function renderTopics() {
         <div class="code-label">Код</div>
         <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><code>${highlightJS(t.code)}</code></pre>
         ${taskHtml}
+        ${quizHtml}
       </div>
     </div>`;
   }).join('');
@@ -1071,6 +1107,35 @@ function renderTask(task) {
 
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===================== QUIZ =====================
+function renderQuiz(quiz, id) {
+  const letters = ['A','B','C','D'];
+  const opts = quiz.options.map((opt, i) =>
+    `<button class="quiz-opt" onclick="answerQuiz(this,${i},${quiz.correct},${id})"><span class="opt-letter">${letters[i]}</span>${escHtml(opt)}</button>`
+  ).join('');
+  return `<div class="quiz" id="quiz-${id}">
+    <div class="quiz-label">🧪 Тест</div>
+    <div class="quiz-q">${escHtml(quiz.q)}</div>
+    <div class="quiz-opts">${opts}</div>
+    <div class="quiz-result" id="qr-${id}"></div>
+  </div>`;
+}
+
+function answerQuiz(btn, chosen, correct, id) {
+  const quiz = document.getElementById(`quiz-${id}`);
+  const result = document.getElementById(`qr-${id}`);
+  quiz.querySelectorAll('.quiz-opt').forEach(o => o.disabled = true);
+  quiz.querySelectorAll('.quiz-opt')[correct].classList.add('correct');
+  if (chosen === correct) {
+    result.textContent = '✓ Правильно!';
+    result.className = 'quiz-result show ok';
+  } else {
+    btn.classList.add('wrong');
+    result.textContent = '✗ Неправильно. Правильна відповідь виділена зеленим.';
+    result.className = 'quiz-result show fail';
+  }
 }
 
 // ===================== INTERACTIONS =====================
