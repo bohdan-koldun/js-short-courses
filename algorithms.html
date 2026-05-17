@@ -186,52 +186,6 @@ pre.code:hover .copy-btn{opacity:1}
 <!-- ===== NAV ===== -->
 <nav class="nav" id="nav"></nav>
 
-<!-- ===== VALIDATION ===== -->
-<div class="validation" id="validation">
-  <button class="validation-header" onclick="toggleValidation()">
-    <span style="font-size:22px">📋</span>
-    <span style="font-weight:700;font-size:16px;flex:1">Результат валідації курсу</span>
-    <span class="topic-chevron" id="val-chevron">▾</span>
-  </button>
-  <div class="validation-body" id="val-body">
-    <div style="margin-bottom:16px">
-      <div class="val-section-title good">✅ Що добре (5)</div>
-      <div class="val-item">Правильний порядок тем — від простого до складного</div>
-      <div class="val-item">Кожна тема має пояснення, код і завдання</div>
-      <div class="val-item">Використання чистого JS без фреймворків — вірний підхід</div>
-      <div class="val-item">Структура репозиторію логічна і зрозуміла</div>
-      <div class="val-item">Приклади коду робочі та коректні</div>
-    </div>
-    <div>
-      <div class="val-section-title fix">⚠️ Що покращено (6)</div>
-      <div class="val-issue">
-        <div class="problem"><b>Проблема:</b> Linked List стоїть на 6 місці, до Recursion — а рекурсія потрібна для розуміння деревʼяних структур</div>
-        <div class="fix"><b>Виправлення:</b> Перемістити Recursion перед Linked List (позиція 6), а Linked List — на 9</div>
-      </div>
-      <div class="val-issue">
-        <div class="problem"><b>Проблема:</b> Завдання сформульовані надто коротко і абстрактно для новачка</div>
-        <div class="fix"><b>Виправлення:</b> Додати конкретні вхідні дані, очікуваний результат і підказки</div>
-      </div>
-      <div class="val-issue">
-        <div class="problem"><b>Проблема:</b> Немає складності алгоритмів (Big O) — новачок не розуміє ЧОМУ один алгоритм кращий</div>
-        <div class="fix"><b>Виправлення:</b> Додати просту шкалу O(1) → O(n) → O(n²) до кожної теми</div>
-      </div>
-      <div class="val-issue">
-        <div class="problem"><b>Проблема:</b> Hash Table розділ не показує власну реалізацію — лише Set</div>
-        <div class="fix"><b>Виправлення:</b> Додати простий клас HashTable з методами set/get</div>
-      </div>
-      <div class="val-issue">
-        <div class="problem"><b>Проблема:</b> Немає вступу: що таке алгоритм, що таке структура даних</div>
-        <div class="fix"><b>Виправлення:</b> Додати Topic 0 з поясненням базових понять</div>
-      </div>
-      <div class="val-issue">
-        <div class="problem"><b>Проблема:</b> Binary Search пояснений без ілюстрації процесу поділу</div>
-        <div class="fix"><b>Виправлення:</b> Додати покрокову візуалізацію пошуку</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ===== TOPICS ===== -->
 <div class="section-label">ТЕМИ КУРСУ</div>
 <div id="topics"></div>
