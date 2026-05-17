@@ -45,7 +45,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-he
 }
 
 /* ===== GRID ===== */
-.courses{max-width:900px;margin:0 auto;padding:20px 20px 80px;display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:24px}
+.courses{max-width:1160px;margin:0 auto;padding:20px 20px 80px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
 
 .card{
   background:var(--surface);border:1px solid var(--border);border-radius:16px;
@@ -59,16 +59,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-he
 }
 .card--blue::before{background:linear-gradient(90deg,#4a8eff,#a78bfa)}
 .card--orange::before{background:linear-gradient(90deg,#f0883e,#ffd866)}
+.card--green::before{background:linear-gradient(90deg,#34d058,#79c0ff)}
 
 .card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
 .card--blue:hover{border-color:rgba(74,142,255,.4)}
 .card--orange:hover{border-color:rgba(240,136,62,.4)}
+.card--green:hover{border-color:rgba(52,208,88,.4)}
 
 .card-icon{font-size:36px;line-height:1}
 .card-meta{display:flex;flex-direction:column;gap:8px}
 .card-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
 .card--blue .card-label{color:var(--accent)}
 .card--orange .card-label{color:var(--orange)}
+.card--green .card-label{color:var(--green)}
 .card-title{font-size:22px;font-weight:800;line-height:1.25}
 .card-desc{color:var(--text-muted);font-size:14px;line-height:1.6}
 
@@ -86,6 +89,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-he
 }
 .card--blue .card-cta{background:linear-gradient(135deg,#4a8eff,#6ba3ff);color:#fff}
 .card--orange .card-cta{background:linear-gradient(135deg,#f0883e,#ffa96e);color:#fff}
+.card--green .card-cta{background:linear-gradient(135deg,#34d058,#5de87a);color:#0a0e17}
 .card-cta:hover{opacity:.88}
 .card-cta svg{width:16px;height:16px;flex-shrink:0}
 
@@ -103,6 +107,27 @@ footer{text-align:center;padding:24px 20px;color:var(--text-muted);font-size:13p
 </section>
 
 <div class="courses">
+
+  <a href="nodejs-local.html" class="card card--green">
+    <div class="card-icon">🖥️</div>
+    <div class="card-meta">
+      <span class="card-label">Налаштування середовища</span>
+      <h2 class="card-title">Node.js локально</h2>
+      <p class="card-desc">Встанови Node.js на Ubuntu, запускай .js файли через VS Code, організуй код по папках і зберігай своє навчання на GitHub — крок за кроком.</p>
+    </div>
+    <div class="card-tags">
+      <span class="tag">6 тем</span>
+      <span class="tag">⏱ ~1 год</span>
+      <span class="tag">Для новачків</span>
+      <span class="tag">Ubuntu</span>
+      <span class="tag">VS Code</span>
+      <span class="tag">Git</span>
+    </div>
+    <span class="card-cta">
+      Відкрити курс
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </span>
+  </a>
 
   <a href="algorithms.html" class="card card--blue">
     <div class="card-icon">⚡</div>

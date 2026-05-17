@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Node.js локально — Ubuntu + VS Code + GitHub</title>
+<meta name="description" content="Як встановити Node.js на Ubuntu, запускати JS скрипти у VS Code, організувати папки по темах і зберігати навчання на GitHub.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+:root{--primary:#34d058;--primary-rgb:52,208,88}
+.hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(52,208,88,.09) 0%,transparent 70%);pointer-events:none}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--green);margin-bottom:12px;text-transform:uppercase}
+.hero h1{font-size:clamp(26px,5vw,42px);font-weight:800;line-height:1.15;margin-bottom:10px;background:linear-gradient(135deg,#34d058 0%,#79c0ff 60%,#34d058 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 6s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-sub{color:var(--text-muted);font-size:15px;max-width:520px;margin:0 auto}
+.hero-tags{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.hero-tag{background:rgba(52,208,88,.08);border:1px solid rgba(52,208,88,.18);border-radius:99px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--green)}
+/* Terminal block */
+.terminal{background:#0c1018;border:1px solid var(--border);border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.9;font-family:var(--font-mono);margin:12px 0 14px}
+.terminal-bar{background:var(--surface2);padding:7px 14px;font-size:11px;color:var(--text-muted);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;border-radius:10px 10px 0 0}
+.terminal-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.terminal-dot.r{background:#f0564a}.terminal-dot.y{background:#e3a832}.terminal-dot.g{background:#34d058}
+.terminal-name{margin-left:4px}
+.terminal-body{padding:12px 18px}
+.term-prompt{color:#34d058;user-select:none}
+.term-cmd{color:#c9d1d9}
+.term-out{color:#79c0ff}
+.term-comment{color:#484f58;font-style:italic}
+/* Folder tree */
+.folder-tree{font-family:var(--font-mono);font-size:13px;line-height:2;color:#c9d1d9;background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin:12px 0 14px;overflow-x:auto}
+.folder-tree .dir{color:#ffa657}
+.folder-tree .file{color:#a5d6ff}
+.folder-tree .note{color:#484f58;font-style:italic;font-size:11px}
+/* Workflow cards */
+.workflow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0 14px}
+.wf-card{border-radius:10px;padding:12px;text-align:center}
+.wf-icon{font-size:22px;margin-bottom:6px}
+.wf-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.wf-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+@media(max-width:600px){.workflow-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 7H3M6 3L2 7l4 4"/></svg>
+      Всі курси
+    </a>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-cur">Node.js локально — Ubuntu + VS Code + GitHub</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">Налаштування середовища</div>
+  <h1>Node.js локально<br>Ubuntu · VS Code · GitHub</h1>
+  <p class="hero-sub">Як запускати JS скрипти на своєму комп'ютері, організовувати навчання по папках і зберігати весь код на GitHub.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">6 тем</span>
+    <span class="hero-tag">⏱ ~1 год</span>
+    <span class="hero-tag">Ubuntu 20.04+</span>
+    <span class="hero-tag">Для новачків</span>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <span class="progress-label">Тести:</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-score" id="progress-score">0 / 6</span>
+</div>
+
+<div class="container">
+<nav class="nav" id="nav"></nav>
+<div class="section-label">ТЕМИ КУРСУ</div>
+<div id="topics"></div>
+
+<a href="rest-api.html" class="next-course">
+  <div>
+    <div class="next-course-label">Наступний курс</div>
+    <div class="next-course-title">🌐 REST API для JavaScript розробника</div>
+  </div>
+  <span class="next-course-arrow">→</span>
+</a>
+
+<div class="footer">
+  Порада: відкрий цю сторінку поруч з терміналом і виконуй команди одразу ✓
+</div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+Storage.key = 'jsc-nodejs-local';
+totalTopics = 6;
+
+const TOPICS = [
+
+// ==================== 0. INSTALL NODE ====================
+{id:0, emoji:"⚙️", title:"Встановлення Node.js", subtitle:"nvm — менеджер версій",
+explanation:"Node.js — це середовище для запуску JavaScript поза браузером. Встановлювати краще через nvm (Node Version Manager) — не потребує sudo, дозволяє мати кілька версій одночасно. На Ubuntu займає 2 хвилини.",
+realWorld:"Без Node.js команда 'node script.js' не працює. Після встановлення ти зможеш запускати будь-який .js файл прямо з терміналу.",
+keyFact:"nvm — це стандартний інструмент розробників. Більшість Node.js туторіалів передбачають що він у тебе є",
+diagram:"install-nvm",
+code:`// Після встановлення — перевір версії:
+// $ node --version   → v22.x.x
+// $ npm --version    → 10.x.x
+
+// Node.js дає доступ до об'єкта process:
+console.log('Версія:', process.version);     // v22.x.x
+console.log('Система:', process.platform);   // linux
+console.log('Архітектура:', process.arch);   // x64
+
+// Увага: process є тільки в Node.js, не в браузері.
+// Кнопка "▶ run" тут симулює браузер — process там немає.
+// Справжній результат побачиш після: node info.js`,
+task:{
+  title:"Встанови Node.js і перевір версію",
+  desc:'Виконай команди з термінального блоку вище. Після встановлення запусти <code>node --version</code> і <code>npm --version</code> у терміналі. Обидві команди повинні вивести версії.',
+  input:"node --version",
+  output:"v22.x.x (або будь-яка LTS версія)",
+  hint:"Якщо команда nvm не знайдена після встановлення — закрий і відкрий термінал знову (або виконай <code>source ~/.bashrc</code>).",
+  solution:`// Команди у терміналі (по черзі):
+// curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+// source ~/.bashrc
+// nvm install --lts
+// nvm use --lts
+// node --version
+// npm --version`
+}},
+
+// ==================== 1. FIRST SCRIPT ====================
+{id:1, emoji:"🚀", title:"Перший скрипт", subtitle:"Пишемо hello.js, запускаємо через node",
+explanation:"Будь-який .js файл запускається командою 'node назва-файлу.js'. Результат console.log() зʼявляється прямо в терміналі. Ніякого браузера, ніяких DevTools — тільки файл і результат.",
+realWorld:"Всі Node.js сервери, CLI-утиліти, скрипти автоматизації запускаються саме так. Ця команда — твій головний інструмент.",
+keyFact:"node назва-файлу.js — запускає JavaScript локально. Ctrl+C — зупиняє скрипт якщо він завис",
+diagram:"first-script",
+code:`// hello.js — запусти це через: node hello.js
+const name = 'Розробник';
+console.log('Привіт,', name + '!');
+
+// Математика
+const square = n => n * n;
+console.log('5² =', square(5));   // 25
+
+// Поточна дата (тільки в Node.js/браузері)
+const now = new Date();
+console.log('Рік:', now.getFullYear());`,
+task:{
+  title:"Скрипт-знайомство",
+  desc:'Створи файл <code>hello.js</code>. Скрипт повинен вивести: твоє імʼя, поточний рік і результат 7 × 6.',
+  input:"node hello.js",
+  output:"Привіт! Мене звуть Іван.\n2025\n42",
+  hint:"Для поточного року: <code>new Date().getFullYear()</code>. Множення: <code>7 * 6</code>.",
+  solution:`// hello.js
+console.log('Привіт! Мене звуть Іван.');
+console.log(new Date().getFullYear());
+console.log(7 * 6);
+
+// Запуск у терміналі:
+// $ node hello.js`
+}},
+
+// ==================== 2. FOLDER STRUCTURE ====================
+{id:2, emoji:"📁", title:"Структура папок", subtitle:"Одна тема — одна папка",
+explanation:"Під час навчання організуй код по папках: одна папка на тему курсу. Через місяць у тебе буде чітка структура, і ти зможеш легко знайти будь-який свій скрипт. Навіть якщо код не подобається — зберігай. Це твій щоденник прогресу.",
+realWorld:"Навіть 'поганий' код у папці — краще за відсутність коду. Через рік подивишся і здивуєшся наскільки виріс. Роботодавці теж дивляться на GitHub-активність.",
+keyFact:"Зберігай ВСЕ: невдалі спроби, незрозумілий код, чорновики. Прогрес видно тільки коли є з чим порівнювати",
+diagram:"folder-structure",
+code:`// Кожен файл у папці — це окрема задача або концепція.
+// Не намагайся зробити один великий файл на тему.
+// Маленькі файли легше читати і запускати.
+
+// Приклад: 02-algorithms/findMax.js
+function findMax(numbers) {
+  let max = numbers[0];
+  for (const n of numbers) {
+    if (n > max) max = n;
+  }
+  return max;
+}
+
+console.log(findMax([3, 1, 9, 2, 7])); // 9
+console.log(findMax([-5, -1, -3]));    // -1`,
+task:{
+  title:"Створи структуру папок для навчання",
+  desc:'Відкрий термінал і створи структуру папок для свого навчання. Використай команди нижче або зроби це у VS Code через File Explorer.',
+  input:"ls js-learning/",
+  output:"01-basics  02-algorithms  03-rest-api",
+  hint:"<code>mkdir -p</code> створює вкладені папки за один раз. Щоб відкрити папку у VS Code: <code>code .</code>",
+  solution:`// Команди у терміналі:
+// mkdir -p js-learning/01-basics
+// mkdir -p js-learning/02-algorithms
+// mkdir -p js-learning/03-rest-api
+// cd js-learning
+// ls
+// → 01-basics  02-algorithms  03-rest-api
+
+// Потім відкрий у VS Code:
+// code .`
+}},
+
+// ==================== 3. VS CODE ====================
+{id:3, emoji:"💻", title:"VS Code — все в одному", subtitle:"Термінал + редактор в одному вікні",
+explanation:"VS Code — стандарт для Node.js розробки. Вбудований термінал (Ctrl+`) дозволяє писати код і одразу запускати його без перемикання між вікнами. Розширення 'Node.js Extension Pack' додає підсвітку, автодоповнення і дебаггер.",
+realWorld:"Ctrl+` і node файл.js — це 90% роботи з Node.js у VS Code. Коли звикнеш до цього комбо, швидкість роботи зросте вдвічі.",
+keyFact:"code . — ця команда відкриває поточну папку у VS Code прямо з терміналу (дуже зручно)",
+diagram:"vscode-tips",
+code:`// Запускай скрипти прямо з терміналу VS Code:
+// Ctrl+\` — відкрити/закрити термінал
+// Ctrl+S  — зберегти файл
+// Ctrl+/  — закоментувати/відкоментувати рядок
+// Ctrl+P  — швидко відкрити будь-який файл
+
+// Якщо є помилка синтаксису — VS Code підкреслить червоним
+const broken = ; // ← VS Code покаже помилку тут до запуску
+
+// Правильно:
+const working = 'все ОК';
+console.log(working);`,
+task:{
+  title:"Відкрий і запусти файл у VS Code",
+  desc:'Відкрий свою папку <code>js-learning</code> у VS Code (<code>code .</code> з терміналу). Створи файл <code>01-basics/test.js</code>, напиши <code>console.log("VS Code + Node.js ✓")</code> і запусти через вбудований термінал.',
+  input:"node 01-basics/test.js",
+  output:"VS Code + Node.js ✓",
+  hint:"Відкрий термінал: Ctrl+`. Переконайся що ти у папці js-learning (команда <code>pwd</code> показує поточну папку).",
+  solution:`// 01-basics/test.js
+console.log('VS Code + Node.js ✓');
+
+// У вбудованому терміналі VS Code:
+// $ node 01-basics/test.js
+// → VS Code + Node.js ✓`
+}},
+
+// ==================== 4. GIT + GITHUB ====================
+{id:4, emoji:"🐙", title:"Git та GitHub", subtitle:"Зберігаємо своє навчання назавжди",
+explanation:"Git — система контролю версій: кожен commit — знімок твого коду в конкретний момент. GitHub — хмарне сховище для цих знімків. Разом вони дають: резервну копію, всю історію змін, і публічне портфоліо. Навіть поганий код варто пушити — ти зможеш бачити свій прогрес.",
+realWorld:"Через 3 місяці регулярних комітів у тебе буде видима зелена активність на GitHub. Це перше що дивляться технічні рекрутери перед співбесідою.",
+keyFact:"git add . → git commit -m 'опис' → git push — ці три команди зберігають твій прогрес назавжди",
+diagram:"git-flow",
+code:`// .gitignore — розміщуй у корені проєкту.
+// Git ігноруватиме ці файли і папки:
+//
+// node_modules/
+// .env
+// *.log
+// .DS_Store
+
+// Перевір статус (які файли змінились):
+// $ git status
+
+// Переглянь свою активність:
+// $ git log --oneline
+// a1b2c3d Додав функцію findMax
+// d4e5f6g Вивчив масиви — перші приклади
+// f7g8h9i Початок навчання JS`,
+task:{
+  title:"Перший push на GitHub",
+  desc:'Зареєструйся на <a href="https://github.com" target="_blank">github.com</a>, створи новий публічний репозиторій <code>js-learning</code> (без README), і запуши свою папку. GitHub покаже тобі точні команди після створення репозиторію.',
+  input:"git push -u origin main",
+  output:"Твій код доступний за адресою github.com/твій-нік/js-learning",
+  hint:"Спочатку налаштуй Git: <code>git config --global user.name 'Ім'я'</code> і <code>git config --global user.email 'email'</code>. Без цього commit не пройде.",
+  solution:`// Команди у терміналі (у папці js-learning):
+// git init
+// git add .
+// git commit -m "Початок навчання JS"
+
+// На github.com: натисни New → назви js-learning → Create
+// Потім виконай команди які GitHub покаже (секція "push an existing repository"):
+// git remote add origin https://github.com/username/js-learning.git
+// git branch -M main
+// git push -u origin main`
+}},
+
+// ==================== 5. DAILY WORKFLOW ====================
+{id:5, emoji:"🔄", title:"Щоденний workflow", subtitle:"Пишеш → Запускаєш → Пушиш",
+explanation:"Простий ритм, який перетворює навчання на звичку: пишеш код у VS Code → запускаєш через node → виправляєш помилки → пушиш на GitHub. Навіть якщо результат не ідеальний — пушь. Кількість комітів важливіша за їх якість на початку.",
+realWorld:"Через місяць такого підходу в тебе буде 20-30 комітів, зрозуміла структура папок, і ти зможеш показати GitHub будь-кому. Це вже краще ніж у більшості новачків.",
+keyFact:"Краще маленький коміт щодня, ніж ідеальний раз на місяць — головне постійність",
+diagram:"workflow",
+code:`// Типова структура навчального скрипту.
+// Зроби це шаблоном для кожного нового файлу:
+
+// Задача: перевірити чи рядок є паліндромом
+function isPalindrome(str) {
+  const clean = str.toLowerCase();
+  const reversed = clean.split('').reverse().join('');
+  return clean === reversed;
+}
+
+// Тести
+console.log(isPalindrome('racecar')); // true
+console.log(isPalindrome('level'));   // true
+console.log(isPalindrome('hello'));   // false
+
+// Запуск: node 02-algorithms/palindrome.js
+// Коміт:  git add . && git commit -m "Паліндром: isPalindrome"
+// Пуш:    git push`,
+task:{
+  title:"Повний цикл: напиши → запусти → запуши",
+  desc:'Напиши функцію <code>isEven(n)</code>, збережи у відповідну папку, запусти через node, переконайся що результат правильний — і зроби git commit із зрозумілим повідомленням.',
+  input:"node 01-basics/isEven.js",
+  output:"isEven(4) → true\nisEven(7) → false",
+  hint:"Парне число: <code>n % 2 === 0</code>. Після перевірки: <code>git add . && git commit -m 'isEven: перевірка парного числа'</code>",
+  solution:`// 01-basics/isEven.js
+function isEven(n) {
+  return n % 2 === 0;
+}
+
+console.log('isEven(4) →', isEven(4));  // true
+console.log('isEven(7) →', isEven(7));  // false
+
+// Запуск і збереження:
+// $ node 01-basics/isEven.js
+// $ git add .
+// $ git commit -m "isEven: перевірка парного числа"
+// $ git push`
+}}
+];
+
+// ===================== QUIZZES =====================
+const QUIZZES = [
+  {q:"Яка команда встановлює стабільну LTS версію Node.js через nvm?",options:["nvm install --lts","npm install node --lts","sudo apt install nodejs","node install stable"],correct:0},
+  {q:"Яка команда запускає файл script.js через Node.js?",options:["node script.js","npm run script.js","run script.js","execute script.js"],correct:0},
+  {q:"Чому варто зберігати 'поганий' навчальний код на GitHub?",options:["Щоб бачити прогрес і мати портфоліо для роботодавців","Тому що Git вимагає зберігати всі файли","Поганий код займає менше місця","Щоб не писати новий код"],correct:0},
+  {q:"Яке скорочення відкриває вбудований термінал у VS Code?",options:["Ctrl+`","Ctrl+T","Alt+Enter","Ctrl+Shift+X"],correct:0},
+  {q:"Яка послідовність команд зберігає зміни у Git і відправляє на GitHub?",options:["git add . → git commit → git push","git push → git add → git commit","git commit → git push → git add","git save → git send"],correct:0},
+  {q:"Що таке правильний щоденний workflow для навчання?",options:["Пишеш код → запускаєш → перевіряєш → пушиш","Пишеш до ідеального результату → тоді пушиш","Пушиш спочатку, потім пишеш код","Тільки пишеш — push не потрібен новачкам"],correct:0},
+];
+
+// ===================== DIAGRAMS =====================
+function renderDiagram(type) {
+  if (type === 'install-nvm') {
+    return `<div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-name">Terminal — Ubuntu</span>
+      </div>
+      <div class="terminal-body">
+        <div class="term-comment"># 1. Завантажити і запустити скрипт інсталятора nvm</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash</span></div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># 2. Перезапусти термінал або виконай:</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">source ~/.bashrc</span></div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># 3. Встановити Node.js LTS (довгострокова підтримка)</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">nvm install --lts</span></div>
+        <div class="term-out">Installing latest LTS version... Now using node v22.x.x (npm v10.x.x)</div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># 4. Перевірити</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">node --version</span></div>
+        <div class="term-out">v22.x.x</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">npm --version</span></div>
+        <div class="term-out">10.x.x</div>
+      </div>
+    </div>`;
+  }
+  if (type === 'first-script') {
+    return `<div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-name">Terminal</span>
+      </div>
+      <div class="terminal-body">
+        <div class="term-comment"># Створи файл у VS Code і збережи як hello.js</div>
+        <div class="term-comment"># Або через nano:</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">nano hello.js</span></div>
+        <div class="term-comment"># Напиши: console.log('Hello, Node.js!')</div>
+        <div class="term-comment"># Ctrl+X → Y → Enter щоб зберегти</div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># Запусти скрипт:</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">node hello.js</span></div>
+        <div class="term-out">Hello, Node.js!</div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># Вітаємо — ти запустив JavaScript без браузера!</div>
+      </div>
+    </div>`;
+  }
+  if (type === 'folder-structure') {
+    return `<div class="folder-tree">
+<span class="dir">js-learning/</span>                   <span class="note">← корінь (git init тут)</span>
+├── <span class="dir">01-basics/</span>                  <span class="note">← основи JS</span>
+│   ├── <span class="file">hello.js</span>
+│   ├── <span class="file">variables.js</span>
+│   └── <span class="file">functions.js</span>
+├── <span class="dir">02-algorithms/</span>              <span class="note">← задачі з курсу Algorithms</span>
+│   ├── <span class="file">findMax.js</span>
+│   ├── <span class="file">sort.js</span>
+│   └── <span class="file">linked-list.js</span>
+├── <span class="dir">03-rest-api/</span>                <span class="note">← задачі з курсу REST API</span>
+│   ├── <span class="file">fetch-example.js</span>
+│   └── <span class="file">error-handling.js</span>
+├── <span class="file">.gitignore</span>                  <span class="note">← node_modules/, .env</span>
+└── <span class="file">README.md</span>                   <span class="note">← що вчив, що зрозумів</span></div>`;
+  }
+  if (type === 'vscode-tips') {
+    return `<div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-name">VS Code — корисні шорткати</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="term-prompt">Ctrl+\`</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="term-out">відкрити / закрити термінал</span></div>
+        <div><span class="term-prompt">Ctrl+S</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="term-out">зберегти файл</span></div>
+        <div><span class="term-prompt">Ctrl+/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="term-out">закоментувати / відкоментувати рядок</span></div>
+        <div><span class="term-prompt">Ctrl+P</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="term-out">швидко відкрити будь-який файл</span></div>
+        <div><span class="term-prompt">Ctrl+Shift+E</span>&nbsp;&nbsp;&nbsp;<span class="term-out">провідник файлів (Explorer)</span></div>
+        <div><span class="term-prompt">F5</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="term-out">запустити дебаггер</span></div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># Відкрити поточну папку у VS Code з терміналу:</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">code .</span></div>
+        <div class="term-out">VS Code відкриється з твоєю папкою як проєктом</div>
+      </div>
+    </div>`;
+  }
+  if (type === 'git-flow') {
+    return `<div class="terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-name">Terminal — Git</span>
+      </div>
+      <div class="terminal-body">
+        <div class="term-comment"># Один раз: налаштуй своє імʼя та email</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">git config --global user.name "Твоє Ім'я"</span></div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">git config --global user.email "email@example.com"</span></div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># Один раз у проєкті: ініціалізація</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">git init</span></div>
+        <div>&nbsp;</div>
+        <div class="term-comment"># Щодня: зберегти прогрес (ці 3 команди)</div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">git add .</span></div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">git commit -m "Вивчив масиви, написав findMax і findMin"</span></div>
+        <div><span class="term-prompt">$&nbsp;</span><span class="term-cmd">git push</span></div>
+        <div class="term-out">→ GitHub updated · 3 files changed</div>
+      </div>
+    </div>`;
+  }
+  if (type === 'workflow') {
+    return `<div class="workflow-grid">
+      <div class="wf-card" style="background:rgba(52,208,88,.06);border:1px solid rgba(52,208,88,.2)">
+        <div class="wf-icon">📝</div>
+        <div class="wf-title" style="color:var(--green)">1. Пишеш</div>
+        <div class="wf-desc">Відкрий VS Code, обери задачу з курсу, напиши код</div>
+      </div>
+      <div class="wf-card" style="background:rgba(74,142,255,.06);border:1px solid rgba(74,142,255,.2)">
+        <div class="wf-icon">▶️</div>
+        <div class="wf-title" style="color:var(--accent)">2. Запускаєш</div>
+        <div class="wf-desc">Ctrl+\` → node файл.js. Бачиш помилку — читаєш і виправляєш</div>
+      </div>
+      <div class="wf-card" style="background:rgba(227,168,50,.06);border:1px solid rgba(227,168,50,.2)">
+        <div class="wf-icon">🔍</div>
+        <div class="wf-title" style="color:var(--yellow)">3. Перевіряєш</div>
+        <div class="wf-desc">Правильний результат? Спробуй граничні випадки: 0, від'ємні, порожній масив</div>
+      </div>
+      <div class="wf-card" style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2)">
+        <div class="wf-icon">🐙</div>
+        <div class="wf-title" style="color:var(--purple)">4. Пушиш</div>
+        <div class="wf-desc">git add . → commit → push. Завжди. Навіть якщо код не ідеальний</div>
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+// ===================== RENDER =====================
+function renderNav() {
+  document.getElementById('nav').innerHTML = TOPICS.map(t => {
+    const short = t.title.split(' — ')[0].split(' ').slice(0, 3).join(' ');
+    return `<button class="nav-btn" onclick="scrollToTopic(${t.id})" id="nav-${t.id}">${t.emoji} ${short}<span class="nav-check">✓</span></button>`;
+  }).join('');
+}
+
+function renderTopics() {
+  document.getElementById('topics').innerHTML = TOPICS.map(t => {
+    const taskHtml = renderTask(t.task);
+    const quizHtml = renderQuiz(QUIZZES[t.id], t.id);
+    return `
+    <div class="topic" id="topic-${t.id}">
+      <button class="topic-header" aria-expanded="false" aria-controls="body-${t.id}" onclick="toggleTopic(${t.id})">
+        <span class="topic-emoji">${t.emoji}</span>
+        <div class="topic-info">
+          <div class="topic-title">${t.title}</div>
+          <div class="topic-sub">${t.subtitle}</div>
+        </div>
+        <span class="topic-chevron">▾</span>
+      </button>
+      <div class="topic-body" id="body-${t.id}">
+        <div class="explain-box">
+          <div class="explain-label">Пояснення</div>
+          <div class="explain-text">${t.explanation}</div>
+        </div>
+        <div class="meta-real"><b>Де в реальності:</b> ${t.realWorld}</div>
+        ${t.keyFact ? `<div class="keyfact">💡 ${t.keyFact}</div>` : ''}
+        ${t.diagram ? renderDiagram(t.diagram) : ''}
+        <div class="code-label">Код</div>
+        <pre class="code"><button class="copy-btn" onclick="copyCode(this)">copy</button><button class="run-btn-pre" onclick="handleRunCode(this)">▶ run</button><code>${highlightJS(t.code)}</code></pre>
+        <div class="code-output"></div>
+        ${taskHtml}
+        ${quizHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  renderNav();
+  renderTopics();
+  updateProgress();
+});
+</script>
+</body>
+</html>
